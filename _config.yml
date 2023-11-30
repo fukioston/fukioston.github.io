@@ -16,7 +16,7 @@ timezone: Asia/Shanghai
 
 title: Fukioston # the main title
 
-tagline: NKU SE在读 # it will display as the sub-title
+tagline: NKU SE在读 不是很厉害 # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   我好像不是很不厉害。
@@ -34,7 +34,7 @@ twitter:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: your_full_name
+  name: fukioston
   email: 2112966@mail.nankai.edu.cn # change to your email address
   links:
     # The first element serves as the copyright owner's link
@@ -73,7 +73,7 @@ theme_mode: # [light|dark]
 img_cdn: "https://chirpy-img.netlify.app"
 
 # the avatar on sidebar, support local or CORS resources
-avatar: "./myimg/avatar.jpg"
+avatar: "/assets/img/favicons/avatar.jpg"
 
 # boolean type, the global switch for TOC in posts.
 toc: true
