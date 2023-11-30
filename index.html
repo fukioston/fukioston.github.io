@@ -1,1 +1,4 @@
-
+---
+layout: home
+# Index page
+---
