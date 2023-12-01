@@ -9,7 +9,9 @@ layout: default
     {% assign tab_key = page.title | downcase %}
     {% assign title = site.data.locales[lang].tabs[tab_key] | default: page.title %}
     <h1 class="dynamic-title">
+      {% if title != 'About Me' %}
       {{ title }}
+    {% endif %}
     </h1>
     <div class="content">
       {{ content }}
