@@ -16,115 +16,6 @@ layout: page
     box-sizing: border-box;
   }
 
-  .about-hero {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 220px;
-    gap: clamp(2rem, 6vw, 5rem);
-    align-items: center;
-    min-height: 340px;
-    padding: clamp(2rem, 5vw, 4.5rem);
-    overflow: hidden;
-    border: 1px solid var(--main-border-color);
-    border-radius: 28px;
-    background:
-      radial-gradient(circle at 90% 10%, rgba(208, 107, 60, 0.2), transparent 34%),
-      radial-gradient(circle at 5% 95%, rgba(47, 117, 101, 0.16), transparent 32%),
-      var(--about-surface);
-    box-shadow: 0 24px 70px rgba(38, 31, 27, 0.08);
-  }
-
-  .about-hero::before {
-    content: '';
-    position: absolute;
-    top: 24px;
-    right: 28px;
-    width: 80px;
-    height: 80px;
-    opacity: 0.25;
-    background-image: radial-gradient(var(--about-accent) 1.4px, transparent 1.4px);
-    background-size: 11px 11px;
-  }
-
-  .about-name {
-    margin: 0;
-    color: var(--heading-color);
-    font-size: clamp(2.35rem, 6vw, 4.75rem);
-    font-weight: 800;
-    letter-spacing: -0.055em;
-    line-height: 0.98;
-  }
-
-  .about-name span {
-    display: block;
-    margin-top: 0.7rem;
-    color: var(--text-muted-color);
-    font-size: 0.34em;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-  }
-
-  .about-role {
-    max-width: 620px;
-    margin: 1.4rem 0 0;
-    color: var(--text-muted-color);
-    font-size: 1.06rem;
-    line-height: 1.75;
-  }
-
-  .about-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-    margin-top: 1.75rem;
-  }
-
-  .about-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.65rem 1rem;
-    border: 1px solid var(--main-border-color);
-    border-radius: 999px;
-    background: var(--card-bg);
-    color: var(--text-color);
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: transform 180ms ease, border-color 180ms ease, color 180ms ease;
-  }
-
-  .about-link:hover {
-    border-color: var(--about-accent);
-    color: var(--about-accent);
-    text-decoration: none;
-    transform: translateY(-2px);
-  }
-
-  .about-portrait-wrap {
-    position: relative;
-    justify-self: end;
-  }
-
-  .about-portrait-wrap::before {
-    content: '';
-    position: absolute;
-    inset: -12px 12px 12px -12px;
-    border: 2px solid var(--about-accent);
-    border-radius: 48% 48% 18% 48%;
-    transform: rotate(-4deg);
-  }
-
-  .about-portrait {
-    position: relative;
-    display: block;
-    width: min(220px, 100%);
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 48% 48% 18% 48%;
-    filter: saturate(0.86) contrast(1.04);
-    box-shadow: 0 18px 45px rgba(31, 28, 24, 0.2);
-  }
-
   .about-intro {
     display: grid;
     grid-template-columns: minmax(0, 1.3fr) minmax(240px, 0.7fr);
@@ -358,7 +249,6 @@ layout: page
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .about-hero,
     .about-intro,
     .about-section {
       animation: about-reveal 600ms both;
@@ -389,25 +279,6 @@ layout: page
   }
 
   @media (max-width: 720px) {
-    .about-hero {
-      grid-template-columns: 1fr;
-      padding: 2rem 1.4rem;
-      text-align: center;
-    }
-
-    .about-hero-copy {
-      order: 2;
-    }
-
-    .about-links {
-      justify-content: center;
-    }
-
-    .about-portrait-wrap {
-      justify-self: center;
-      width: 150px;
-    }
-
     .about-intro {
       grid-template-columns: 1fr;
     }
@@ -438,46 +309,10 @@ layout: page
       gap: 0.4rem;
     }
 
-    .about-name {
-      font-size: clamp(2.25rem, 14vw, 3.4rem);
-    }
   }
 </style>
 
 <div class="about-page">
-  <header class="about-hero">
-    <div class="about-hero-copy">
-      <h1 class="about-name">
-        Gaonan Chen
-        <span>陈高楠</span>
-      </h1>
-      <p class="about-role">
-        M.Sc. student in Signal Processing and Machine Learning at Nanyang Technological
-        University, with a focus on AI agents, large language models, and applied machine learning.
-      </p>
-      <div class="about-links">
-        <a class="about-link" href="mailto:GCHEN028@E.NTU.EDU.SG">
-          <i class="fas fa-envelope" aria-hidden="true"></i>
-          Email
-        </a>
-        <span class="about-link">
-          <i class="fab fa-qq" aria-hidden="true"></i>
-          QQ 1125102571
-        </span>
-      </div>
-    </div>
-
-    <div class="about-portrait-wrap">
-      <img
-        class="about-portrait"
-        src="{{ '/assets/img/favicons/avatar.jpg' | relative_url }}"
-        alt="Portrait of Gaonan Chen"
-        width="220"
-        height="220"
-      >
-    </div>
-  </header>
-
   <div class="about-intro">
     <div class="about-card">
       <p>
