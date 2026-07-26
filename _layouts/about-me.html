@@ -219,12 +219,6 @@ layout: page
     letter-spacing: -0.025em;
   }
 
-  .skill-groups {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
-
   .education-grid {
     display: grid;
     gap: 1rem;
@@ -257,6 +251,11 @@ layout: page
     width: 100%;
     max-height: 100%;
     object-fit: contain;
+  }
+
+  .institution-logo--yitu img {
+    filter: brightness(0) saturate(100%) invert(39%) sepia(86%) saturate(1292%)
+      hue-rotate(184deg) brightness(91%) contrast(91%);
   }
 
   .education-period {
@@ -333,35 +332,6 @@ layout: page
     font-size: 0.82rem;
     font-weight: 700;
     white-space: nowrap;
-  }
-
-  .skill-group {
-    padding: 1.35rem;
-    border: 1px solid var(--main-border-color);
-    border-radius: 18px;
-    background: var(--card-bg);
-  }
-
-  .skill-group h3 {
-    margin: 0 0 0.9rem;
-    color: var(--heading-color);
-    font-size: 0.88rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .skill-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .skill-tag {
-    padding: 0.38rem 0.7rem;
-    border-radius: 8px;
-    background: var(--about-accent-soft);
-    color: var(--text-color);
-    font-size: 0.84rem;
   }
 
   .about-list {
@@ -458,8 +428,7 @@ layout: page
       width: 150px;
     }
 
-    .about-intro,
-    .skill-groups {
+    .about-intro {
       grid-template-columns: 1fr;
     }
 
@@ -621,7 +590,7 @@ layout: page
       </article>
 
       <article class="experience-card">
-        <div class="institution-logo">
+        <div class="institution-logo institution-logo--yitu">
           <img src="{{ '/assets/img/about/yitu.svg' | relative_url }}" alt="YITU Technology logo">
         </div>
         <div class="experience-head">
@@ -638,57 +607,6 @@ layout: page
   <section class="about-section">
     <div class="about-section-heading">
       <span>03</span>
-      <h2>Skills</h2>
-    </div>
-
-    <div class="skill-groups">
-      <div class="skill-group">
-        <h3>Programming</h3>
-        <div class="skill-list">
-          <span class="skill-tag">C/C++</span>
-          <span class="skill-tag">Python</span>
-          <span class="skill-tag">Java</span>
-          <span class="skill-tag">JavaScript</span>
-          <span class="skill-tag">HTML &amp; CSS</span>
-          <span class="skill-tag">SQL</span>
-          <span class="skill-tag">LaTeX</span>
-        </div>
-      </div>
-
-      <div class="skill-group">
-        <h3>Frameworks</h3>
-        <div class="skill-list">
-          <span class="skill-tag">PyTorch</span>
-          <span class="skill-tag">Django</span>
-          <span class="skill-tag">Bootstrap</span>
-          <span class="skill-tag">Node.js</span>
-          <span class="skill-tag">Vue 3</span>
-          <span class="skill-tag">Spring Boot 3</span>
-        </div>
-      </div>
-
-      <div class="skill-group">
-        <h3>Databases</h3>
-        <div class="skill-list">
-          <span class="skill-tag">MySQL</span>
-          <span class="skill-tag">Neo4j</span>
-          <span class="skill-tag">Redis</span>
-        </div>
-      </div>
-
-      <div class="skill-group">
-        <h3>Languages</h3>
-        <div class="skill-list">
-          <span class="skill-tag">English · CET-6 484</span>
-          <span class="skill-tag">IELTS 6.0</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="about-section">
-    <div class="about-section-heading">
-      <span>04</span>
       <h2>Honors &amp; Awards</h2>
     </div>
 
@@ -702,7 +620,7 @@ layout: page
 
   <section class="about-section">
     <div class="about-section-heading">
-      <span>05</span>
+      <span>04</span>
       <h2>Publication</h2>
     </div>
 
