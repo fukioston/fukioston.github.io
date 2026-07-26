@@ -227,60 +227,63 @@ layout: page
 
   .education-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
   }
 
   .education-card {
-    position: relative;
-    min-height: 190px;
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr) auto;
+    gap: 1.5rem;
+    align-items: center;
     padding: 1.5rem;
-    overflow: hidden;
     border: 1px solid var(--main-border-color);
     border-radius: 18px;
     background: var(--card-bg);
   }
 
-  .education-card::after {
-    content: attr(data-mark);
-    position: absolute;
-    right: -0.15rem;
-    bottom: -1.25rem;
-    color: var(--about-accent-soft);
-    font-family: Georgia, serif;
-    font-size: 6rem;
-    font-weight: 700;
-    line-height: 1;
+  .institution-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 76px;
+    padding: 0.55rem;
+    border-radius: 13px;
+    background: #fff;
+  }
+
+  .institution-logo img {
+    display: block;
+    width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
 
   .education-period {
+    grid-column: 3;
+    grid-row: 1;
     color: var(--about-accent);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.08em;
+    white-space: nowrap;
   }
 
   .education-card h3 {
-    position: relative;
-    z-index: 1;
-    margin: 0.75rem 0 0.35rem;
+    margin: 0 0 0.35rem;
     color: var(--heading-color);
     font-size: 1.25rem;
   }
 
   .education-degree {
-    position: relative;
-    z-index: 1;
     margin: 0;
     color: var(--text-muted-color);
     line-height: 1.55;
   }
 
   .education-meta {
-    position: relative;
-    z-index: 1;
     display: inline-block;
-    margin-top: 1.1rem;
+    margin-top: 0.75rem;
     padding: 0.35rem 0.65rem;
     border-radius: 7px;
     background: var(--about-accent-soft);
@@ -288,24 +291,15 @@ layout: page
   }
 
   .experience-list {
-    position: relative;
     display: grid;
     gap: 1.25rem;
   }
 
-  .experience-list::before {
-    content: '';
-    position: absolute;
-    top: 1.25rem;
-    bottom: 1.25rem;
-    left: 0.43rem;
-    width: 1px;
-    background: var(--main-border-color);
-  }
-
   .experience-card {
-    position: relative;
-    margin-left: 2rem;
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: center;
     padding: clamp(1.3rem, 3vw, 1.8rem);
     border: 1px solid var(--main-border-color);
     border-radius: 18px;
@@ -313,24 +307,11 @@ layout: page
     box-shadow: var(--card-shadow);
   }
 
-  .experience-card::before {
-    content: '';
-    position: absolute;
-    top: 1.55rem;
-    left: -2rem;
-    width: 0.9rem;
-    height: 0.9rem;
-    border: 3px solid var(--card-bg);
-    border-radius: 50%;
-    background: var(--about-green);
-    box-shadow: 0 0 0 1px var(--about-green);
-  }
-
   .experience-head {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
   }
 
   .experience-head h3 {
@@ -352,31 +333,6 @@ layout: page
     font-size: 0.82rem;
     font-weight: 700;
     white-space: nowrap;
-  }
-
-  .experience-points {
-    display: grid;
-    gap: 0.7rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .experience-points li {
-    position: relative;
-    padding-left: 1rem;
-    line-height: 1.65;
-  }
-
-  .experience-points li::before {
-    content: '';
-    position: absolute;
-    top: 0.72em;
-    left: 0;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--about-accent);
   }
 
   .skill-group {
@@ -503,13 +459,33 @@ layout: page
     }
 
     .about-intro,
-    .skill-groups,
-    .education-grid {
+    .skill-groups {
       grid-template-columns: 1fr;
+    }
+
+    .education-card,
+    .experience-card {
+      grid-template-columns: 76px minmax(0, 1fr);
+      gap: 1rem;
+      padding: 1.1rem;
+    }
+
+    .institution-logo {
+      width: 76px;
+      height: 62px;
+      padding: 0.4rem;
+    }
+
+    .education-period {
+      grid-column: 2;
+      grid-row: auto;
+      margin-top: 0.4rem;
+      white-space: normal;
     }
 
     .experience-head {
       flex-direction: column;
+      align-items: flex-start;
       gap: 0.4rem;
     }
 
@@ -585,18 +561,28 @@ layout: page
     </div>
 
     <div class="education-grid">
-      <article class="education-card" data-mark="NTU">
+      <article class="education-card">
+        <div class="institution-logo">
+          <img src="{{ '/assets/img/about/ntu.png' | relative_url }}" alt="Nanyang Technological University logo">
+        </div>
+        <div>
+          <h3>Nanyang Technological University</h3>
+          <p class="education-degree">Master of Science · Signal Processing and Machine Learning</p>
+          <span class="education-meta">Singapore</span>
+        </div>
         <span class="education-period">Aug 2025 — Jan 2027</span>
-        <h3>Nanyang Technological University</h3>
-        <p class="education-degree">Master of Science · Signal Processing and Machine Learning</p>
-        <span class="education-meta">Singapore</span>
       </article>
 
-      <article class="education-card" data-mark="NKU">
+      <article class="education-card">
+        <div class="institution-logo">
+          <img src="{{ '/assets/img/about/nankai.png' | relative_url }}" alt="Nankai University logo">
+        </div>
+        <div>
+          <h3>Nankai University</h3>
+          <p class="education-degree">Bachelor of Engineering · Software Engineering</p>
+          <span class="education-meta">GPA 3.72 / 4.0 · Top 13.3%</span>
+        </div>
         <span class="education-period">Sep 2021 — Jun 2025</span>
-        <h3>Nankai University</h3>
-        <p class="education-degree">Bachelor of Engineering · Software Engineering</p>
-        <span class="education-meta">GPA 3.72 / 4.0 · Top 13.3%</span>
       </article>
     </div>
   </section>
@@ -609,6 +595,9 @@ layout: page
 
     <div class="experience-list">
       <article class="experience-card">
+        <div class="institution-logo">
+          <img src="{{ '/assets/img/about/dongchedi.png' | relative_url }}" alt="Dongchedi logo">
+        </div>
         <div class="experience-head">
           <div>
             <h3>AI Agent Intern</h3>
@@ -616,16 +605,12 @@ layout: page
           </div>
           <span class="experience-date">Apr 2026 — Jul 2026</span>
         </div>
-        <ul class="experience-points">
-          <li>Contributed to an AI avatar system supporting end-to-end new-car transactions, connecting a C-side user agent with a B-side merchant agent.</li>
-          <li>Designed and maintained three core prompts for merchant-agent scenarios, with clearly defined roles and boundaries.</li>
-          <li>Consolidated 17 skills into 3, reducing redundant context injection and skill invocations.</li>
-          <li>Optimized tool preloading and tool-chain orchestration, reducing average response latency from <strong>14.63s to 9.13s</strong>.</li>
-          <li>Planned SFT data synthesis and online-data cleaning for difficult cases not fully addressed by rules and prompt engineering.</li>
-        </ul>
       </article>
 
       <article class="experience-card">
+        <div class="institution-logo">
+          <img src="{{ '/assets/img/about/yitu.svg' | relative_url }}" alt="YITU Technology logo">
+        </div>
         <div class="experience-head">
           <div>
             <h3>LLM Application Intern</h3>
@@ -633,11 +618,6 @@ layout: page
           </div>
           <span class="experience-date">Oct 2024 — Jan 2025</span>
         </div>
-        <ul class="experience-points">
-          <li>Built the “Yitu Xiaoming” agent platform with Dify to automate and improve sales workflows.</li>
-          <li>Split a single sales-information pipeline into context compression and information collection, increasing successful conversations from <strong>73% to 98%</strong>.</li>
-          <li>Redesigned key-account identification and added reflection-based verification, improving accuracy from <strong>55.56% to 93.52%</strong>.</li>
-        </ul>
       </article>
     </div>
   </section>
