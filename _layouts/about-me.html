@@ -10,6 +10,9 @@ layout: page
     --about-surface: color-mix(in srgb, var(--card-bg) 92%, var(--about-accent) 8%);
     color: var(--text-color);
     padding-bottom: 2rem;
+    background:
+      radial-gradient(circle at 96% 5%, var(--about-accent-soft), transparent 19%),
+      radial-gradient(circle at 4% 42%, rgba(47, 117, 101, 0.08), transparent 18%);
   }
 
   .about-page * {
@@ -30,6 +33,14 @@ layout: page
     border-radius: 20px;
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .about-card:hover,
+  .education-card:hover,
+  .experience-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(38, 31, 27, 0.1);
   }
 
   .about-card p {
@@ -77,6 +88,14 @@ layout: page
     margin-bottom: 1.25rem;
   }
 
+  .about-section-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    margin-left: 0.25rem;
+    background: linear-gradient(90deg, var(--main-border-color), transparent);
+  }
+
   .about-section-heading span {
     color: var(--about-accent);
     font-family: Georgia, serif;
@@ -105,6 +124,13 @@ layout: page
     border: 1px solid var(--main-border-color);
     border-radius: 18px;
     background: var(--card-bg);
+    box-shadow: 0 1px 0 rgba(38, 31, 27, 0.03);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .education-card:hover,
+  .experience-card:hover {
+    border-color: rgba(208, 107, 60, 0.35);
   }
 
   .institution-logo {
@@ -176,6 +202,7 @@ layout: page
     border-radius: 18px;
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
   }
 
   .experience-head {
@@ -206,41 +233,106 @@ layout: page
     white-space: nowrap;
   }
 
-  .about-list {
+  .award-timeline {
+    position: relative;
     display: grid;
-    gap: 0.8rem;
+    gap: 1rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .about-list li {
+  .award-timeline::before {
+    content: '';
+    position: absolute;
+    top: 1.65rem;
+    bottom: 1.65rem;
+    left: 94px;
+    width: 1px;
+    background: linear-gradient(var(--about-accent), var(--about-green));
+  }
+
+  .award-item {
+    display: grid;
+    grid-template-columns: 72px 34px minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .award-date {
+    color: var(--about-accent);
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .award-dot {
     position: relative;
-    padding: 1rem 1.2rem 1rem 2.8rem;
+    z-index: 1;
+    width: 14px;
+    height: 14px;
+    margin: auto;
+    border: 3px solid var(--card-bg);
+    border-radius: 50%;
+    background: var(--about-accent);
+    box-shadow: 0 0 0 1px var(--about-accent);
+  }
+
+  .award-item:nth-child(2) .award-dot,
+  .award-item:nth-child(4) .award-dot {
+    background: var(--about-green);
+    box-shadow: 0 0 0 1px var(--about-green);
+  }
+
+  .award-content {
+    position: relative;
+    padding: 1.05rem 1.25rem;
     border: 1px solid var(--main-border-color);
     border-radius: 14px;
     background: var(--card-bg);
-    line-height: 1.6;
+    line-height: 1.55;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
   }
 
-  .about-list li::before {
-    content: '';
-    position: absolute;
-    top: 1.45rem;
-    left: 1.2rem;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--about-green);
-    box-shadow: 0 0 0 5px rgba(47, 117, 101, 0.12);
+  .award-content:hover {
+    border-color: rgba(208, 107, 60, 0.35);
+    box-shadow: var(--card-shadow);
+    transform: translateX(4px);
+  }
+
+  .award-title {
+    display: block;
+    color: var(--heading-color);
+    font-weight: 700;
+  }
+
+  .award-source {
+    display: block;
+    margin-top: 0.18rem;
+    color: var(--text-muted-color);
+    font-size: 0.88rem;
   }
 
   .publication {
+    position: relative;
     padding: clamp(1.3rem, 3vw, 2rem);
     border-left: 4px solid var(--about-accent);
     border-radius: 0 16px 16px 0;
     background: var(--about-surface);
     line-height: 1.75;
+    box-shadow: 0 10px 26px rgba(38, 31, 27, 0.05);
+  }
+
+  .publication::before {
+    content: 'Research';
+    display: block;
+    margin-bottom: 0.55rem;
+    color: var(--about-accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   .publication-title {
@@ -307,6 +399,26 @@ layout: page
       flex-direction: column;
       align-items: flex-start;
       gap: 0.4rem;
+    }
+
+    .award-timeline::before {
+      left: 52px;
+    }
+
+    .award-item {
+      grid-template-columns: 38px 22px minmax(0, 1fr);
+      gap: 0.55rem;
+    }
+
+    .award-date {
+      font-size: 0.76rem;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+
+    .award-dot {
+      width: 12px;
+      height: 12px;
     }
 
   }
@@ -424,11 +536,39 @@ layout: page
       <h2>Honors &amp; Awards</h2>
     </div>
 
-    <ul class="about-list">
-      <li>China Collegiate Computing Contest — AIGC Innovation Competition, National Third Prize · 2024.09</li>
-      <li>Nankai University Innovation Scholarship · 2024.09</li>
-      <li>Nankai University Academic Excellence Scholarship · 2024.09</li>
-      <li>Nankai University Academic Excellence Scholarship · 2023.09</li>
+    <ul class="award-timeline">
+      <li class="award-item">
+        <time class="award-date" datetime="2024-09">2024.09</time>
+        <span class="award-dot" aria-hidden="true"></span>
+        <div class="award-content">
+          <span class="award-title">National Third Prize</span>
+          <span class="award-source">China Collegiate Computing Contest · AIGC Innovation Competition</span>
+        </div>
+      </li>
+      <li class="award-item">
+        <time class="award-date" datetime="2024-09">2024.09</time>
+        <span class="award-dot" aria-hidden="true"></span>
+        <div class="award-content">
+          <span class="award-title">Innovation Scholarship</span>
+          <span class="award-source">Nankai University</span>
+        </div>
+      </li>
+      <li class="award-item">
+        <time class="award-date" datetime="2024-09">2024.09</time>
+        <span class="award-dot" aria-hidden="true"></span>
+        <div class="award-content">
+          <span class="award-title">Academic Excellence Scholarship</span>
+          <span class="award-source">Nankai University</span>
+        </div>
+      </li>
+      <li class="award-item">
+        <time class="award-date" datetime="2023-09">2023.09</time>
+        <span class="award-dot" aria-hidden="true"></span>
+        <div class="award-content">
+          <span class="award-title">Academic Excellence Scholarship</span>
+          <span class="award-source">Nankai University</span>
+        </div>
+      </li>
     </ul>
   </section>
 
