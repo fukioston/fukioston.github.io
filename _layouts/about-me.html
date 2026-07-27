@@ -27,8 +27,10 @@ layout: page
   }
 
   .about-card {
+    position: relative;
     margin: 0;
     padding: clamp(1.4rem, 3vw, 2rem);
+    overflow: hidden;
     border: 1px solid var(--main-border-color);
     border-radius: 20px;
     background: var(--card-bg);
@@ -43,7 +45,20 @@ layout: page
     box-shadow: 0 14px 32px rgba(38, 31, 27, 0.1);
   }
 
+  .about-intro > .about-card:first-child::before {
+    content: '“';
+    position: absolute;
+    top: -2.2rem;
+    right: 1rem;
+    color: var(--about-accent-soft);
+    font-family: Georgia, serif;
+    font-size: 9rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+
   .about-card p {
+    position: relative;
     margin: 0;
     line-height: 1.8;
   }
@@ -59,6 +74,22 @@ layout: page
     background:
       linear-gradient(145deg, var(--about-accent-soft), transparent 60%),
       var(--card-bg);
+  }
+
+  .about-note::after {
+    content: '';
+    position: absolute;
+    right: -28px;
+    bottom: -30px;
+    width: 100px;
+    height: 100px;
+    border: 18px solid rgba(208, 107, 60, 0.08);
+    border-radius: 50%;
+  }
+
+  .about-note > * {
+    position: relative;
+    z-index: 1;
   }
 
   .about-note-label {
@@ -83,7 +114,7 @@ layout: page
 
   .about-section-heading {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 0.85rem;
     margin-bottom: 1.25rem;
   }
@@ -97,9 +128,16 @@ layout: page
   }
 
   .about-section-heading span {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid rgba(208, 107, 60, 0.22);
+    border-radius: 50%;
+    background: var(--about-accent-soft);
     color: var(--about-accent);
     font-family: Georgia, serif;
-    font-size: 0.85rem;
+    font-size: 0.76rem;
     font-style: italic;
   }
 
@@ -116,6 +154,8 @@ layout: page
   }
 
   .education-card {
+    --card-brand: var(--about-accent);
+    position: relative;
     display: grid;
     grid-template-columns: 110px minmax(0, 1fr) auto;
     gap: 1.5rem;
@@ -126,6 +166,27 @@ layout: page
     background: var(--card-bg);
     box-shadow: 0 1px 0 rgba(38, 31, 27, 0.03);
     transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .education-card:nth-child(1) {
+    --card-brand: #b22135;
+  }
+
+  .education-card:nth-child(2) {
+    --card-brand: #7b276f;
+  }
+
+  .education-card::before,
+  .experience-card::before {
+    content: '';
+    position: absolute;
+    top: 18%;
+    bottom: 18%;
+    left: 0;
+    width: 3px;
+    border-radius: 0 999px 999px 0;
+    background: var(--card-brand);
+    opacity: 0.78;
   }
 
   .education-card:hover,
@@ -140,8 +201,10 @@ layout: page
     width: 110px;
     height: 76px;
     padding: 0.55rem;
+    border: 1px solid rgba(34, 35, 38, 0.07);
     border-radius: 13px;
     background: #fff;
+    box-shadow: 0 8px 22px rgba(38, 31, 27, 0.07);
   }
 
   .institution-logo img {
@@ -159,7 +222,10 @@ layout: page
   .education-period {
     grid-column: 3;
     grid-row: 1;
-    color: var(--about-accent);
+    padding: 0.42rem 0.7rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card-brand) 10%, transparent);
+    color: var(--card-brand);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -169,7 +235,8 @@ layout: page
   .education-card h3 {
     margin: 0 0 0.35rem;
     color: var(--heading-color);
-    font-size: 1.25rem;
+    font-size: 1.2rem;
+    letter-spacing: -0.015em;
   }
 
   .education-degree {
@@ -193,6 +260,8 @@ layout: page
   }
 
   .experience-card {
+    --card-brand: var(--about-green);
+    position: relative;
     display: grid;
     grid-template-columns: 110px minmax(0, 1fr);
     gap: 1.5rem;
@@ -205,6 +274,18 @@ layout: page
     transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
   }
 
+  .experience-card:nth-child(1) {
+    --card-brand: #ef3158;
+  }
+
+  .experience-card:nth-child(2) {
+    --card-brand: #2676d9;
+  }
+
+  .experience-card:nth-child(3) {
+    --card-brand: #2474b8;
+  }
+
   .experience-head {
     display: flex;
     justify-content: space-between;
@@ -215,7 +296,8 @@ layout: page
   .experience-head h3 {
     margin: 0;
     color: var(--heading-color);
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
   }
 
   .experience-company {
@@ -223,11 +305,15 @@ layout: page
     margin-top: 0.28rem;
     color: var(--text-muted-color);
     font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .experience-date {
     flex: 0 0 auto;
-    color: var(--about-accent);
+    padding: 0.42rem 0.7rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card-brand) 10%, transparent);
+    color: var(--card-brand);
     font-size: 0.82rem;
     font-weight: 700;
     white-space: nowrap;
@@ -295,6 +381,19 @@ layout: page
     transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
   }
 
+  .award-content::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -6px;
+    width: 10px;
+    height: 10px;
+    border-left: 1px solid var(--main-border-color);
+    border-bottom: 1px solid var(--main-border-color);
+    background: var(--card-bg);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
   .award-content:hover {
     border-color: rgba(208, 107, 60, 0.35);
     box-shadow: var(--card-shadow);
@@ -316,16 +415,21 @@ layout: page
 
   .publication {
     position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 88px;
+    gap: 1.5rem;
+    align-items: center;
     padding: clamp(1.3rem, 3vw, 2rem);
+    overflow: hidden;
+    border: 1px solid var(--main-border-color);
     border-left: 4px solid var(--about-accent);
-    border-radius: 0 16px 16px 0;
+    border-radius: 0 18px 18px 0;
     background: var(--about-surface);
     line-height: 1.75;
     box-shadow: 0 10px 26px rgba(38, 31, 27, 0.05);
   }
 
-  .publication::before {
-    content: 'Research';
+  .publication-label {
     display: block;
     margin-bottom: 0.55rem;
     color: var(--about-accent);
@@ -336,8 +440,47 @@ layout: page
   }
 
   .publication-title {
+    margin: 0;
     color: var(--heading-color);
+    font-size: clamp(1.05rem, 2.2vw, 1.35rem);
     font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: -0.015em;
+  }
+
+  .publication-authors {
+    margin: 0.8rem 0 0;
+    color: var(--text-muted-color);
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .publication-venue {
+    display: inline-block;
+    margin-top: 0.85rem;
+    padding: 0.34rem 0.65rem;
+    border-radius: 7px;
+    background: var(--about-accent-soft);
+    color: var(--about-accent);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .publication-mark {
+    color: var(--about-accent);
+    font-family: Georgia, serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 0.95;
+    text-align: center;
+  }
+
+  .publication-mark span {
+    display: block;
+    color: var(--text-muted-color);
+    font-size: 0.52em;
+    font-style: italic;
+    letter-spacing: 0.08em;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -395,6 +538,10 @@ layout: page
       white-space: normal;
     }
 
+    .experience-date {
+      white-space: normal;
+    }
+
     .experience-head {
       flex-direction: column;
       align-items: flex-start;
@@ -419,6 +566,18 @@ layout: page
     .award-dot {
       width: 12px;
       height: 12px;
+    }
+
+    .publication {
+      grid-template-columns: 1fr;
+    }
+
+    .publication-mark {
+      position: absolute;
+      right: 1rem;
+      bottom: 0.7rem;
+      opacity: 0.13;
+      font-size: 2.6rem;
     }
 
   }
@@ -579,10 +738,21 @@ layout: page
     </div>
 
     <div class="publication">
-      Xunzhi Wang, Zhuowei Zhang, <strong>Gaonan Chen</strong>, Qiongyu Li, Bitong Luo,
-      Zhixin Han, Haotian Wang, Zhiyu Li, Hang Gao, and Mengting Hu.
-      <span class="publication-title">“UBench: Benchmarking Uncertainty in Large Language
-      Models with Multiple Choice Questions.”</span> Findings of ACL, 2025.
+      <div>
+        <span class="publication-label">Research paper</span>
+        <h3 class="publication-title">
+          UBench: Benchmarking Uncertainty in Large Language Models with Multiple Choice Questions
+        </h3>
+        <p class="publication-authors">
+          Xunzhi Wang, Zhuowei Zhang, <strong>Gaonan Chen</strong>, Qiongyu Li,
+          Bitong Luo, Zhixin Han, Haotian Wang, Zhiyu Li, Hang Gao, and Mengting Hu
+        </p>
+        <span class="publication-venue">Findings of ACL · 2025</span>
+      </div>
+      <div class="publication-mark" aria-hidden="true">
+        ACL
+        <span>'25</span>
+      </div>
     </div>
   </section>
 </div>
