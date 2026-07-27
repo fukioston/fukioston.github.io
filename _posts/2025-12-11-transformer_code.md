@@ -12,7 +12,9 @@ mermaid: true
 #   lqip: false
 #   alt: Responsive rendering of Chirpy theme on multiple devices.
 ---
-# self-attention代码
+
+## Self-attention 代码
+
 ```python
 from math import sqrt
 
@@ -43,10 +45,10 @@ class SelfAttention(nn.Module):
         # 乘以v
         dist=torch.bmm(dist,v)
         return dist
-
 ```
-nn.Linear(in_features, out_features) 的核心逻辑是对最后一维的做线性变换
 
-torch.bmm就是batch的矩阵乘法
+### API 说明
 
-transpose更换维度下标
+- `nn.Linear(in_features, out_features)` 的核心逻辑是对最后一维的做线性变换。
+- `torch.bmm` 就是batch的矩阵乘法。
+- `transpose` 更换维度下标。
