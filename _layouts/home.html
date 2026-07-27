@@ -41,35 +41,6 @@ refactor: true
   {% endfor %}
 {% endif %}
 
-<section class="home-masthead">
-  <div class="home-masthead-copy">
-    <p class="home-kicker">Fukioston / Research Notes</p>
-    <h1>把复杂的问题，<span>写成清晰的笔记。</span></h1>
-    <p class="home-lede">
-      这里记录大语言模型、机器学习与工程实践中的学习、思考和代码。
-    </p>
-    <div class="home-actions">
-      <a class="home-action home-action-primary" href="#latest-notes">浏览笔记 <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
-      <a class="home-action" href="{{ '/about-me/' | relative_url }}">关于我 <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-    </div>
-  </div>
-
-  <div class="home-masthead-art" aria-hidden="true">
-    <span class="home-orbit home-orbit-one"></span>
-    <span class="home-orbit home-orbit-two"></span>
-    <span class="home-orbit home-orbit-three"></span>
-    <span class="home-orbit-node home-orbit-node-one"></span>
-    <span class="home-orbit-node home-orbit-node-two"></span>
-    <span class="home-art-label">LEARN<br>BUILD<br>SHARE</span>
-  </div>
-
-  <div class="home-masthead-meta">
-    <span><strong>{{ visible_posts.size | prepend: '0' }}</strong> Notes</span>
-    <span><strong>LLM</strong> Focus</span>
-    <span><strong>2025</strong> Started</span>
-  </div>
-</section>
-
 <div class="home-feed-heading" id="latest-notes">
   <div>
     <p class="home-kicker">Latest Writing</p>
