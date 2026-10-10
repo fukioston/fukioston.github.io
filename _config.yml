@@ -55,8 +55,8 @@ visitor_stats:
   # Sign up at https://clustrmaps.com or https://mapmyvisitors.com, add this site,
   # then copy the `d=...` value from the embed code they give you into `id`.
   map:
-    provider: clustrmaps # [clustrmaps|mapmyvisitors]
-    id: # leave empty to hide the map
+    provider: mapmyvisitors # [clustrmaps|mapmyvisitors]
+    id: vqILqJSn3FcVx-5gv6rLRWzvC0jdDQOTtIwygL9gdj4 # leave empty to hide the map
 
 google_analytics:
   id: # fill in your Google Analytics ID
