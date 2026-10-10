@@ -17,7 +17,7 @@
     content: '';
     width: 2rem;
     height: 1px;
-    background: currentColor;
+    background: currentcolor;
   }
 }
 
@@ -59,6 +59,7 @@
 
   .home-post-card {
     min-width: 0;
+    container-type: inline-size;
 
     &:hover {
       text-decoration: none;
@@ -280,6 +281,7 @@
 
   .post-meta {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.7rem;
@@ -361,12 +363,18 @@
 @media all and (max-width: 720px) {
   #post-list.home-post-grid {
     gap: 1rem;
+  }
+}
 
+/* Stack the artwork above the text whenever the card itself gets narrow */
+@container (max-width: 480px) {
+  #post-list.home-post-grid {
     .post-preview {
-      display: block;
+      flex-direction: column;
     }
 
     .post-art {
+      flex: 0 0 auto;
       min-height: 150px;
     }
 
