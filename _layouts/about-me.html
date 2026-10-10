@@ -21,7 +21,7 @@ layout: page
 
   .about-intro {
     display: grid;
-    grid-template-columns: minmax(0, 1.65fr) minmax(200px, 0.75fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem;
     margin: 1.25rem 0 2.5rem;
   }
@@ -81,18 +81,6 @@ layout: page
     outline-offset: 3px;
   }
 
-  .about-note .about-location {
-    margin-top: 1rem;
-    color: var(--text-muted-color);
-    font-size: 0.85rem;
-  }
-
-  .publication-summary {
-    margin: 0.85rem 0 0;
-    font-size: 0.92rem;
-    line-height: 1.7;
-  }
-
   .about-card {
     position: relative;
     margin: 0;
@@ -132,47 +120,6 @@ layout: page
 
   .about-card p + p {
     margin-top: 1rem;
-  }
-
-  .about-note {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background:
-      linear-gradient(145deg, var(--about-accent-soft), transparent 60%),
-      var(--card-bg);
-  }
-
-  .about-note::after {
-    content: '';
-    position: absolute;
-    right: -28px;
-    bottom: -30px;
-    width: 100px;
-    height: 100px;
-    border: 18px solid rgba(208, 107, 60, 0.08);
-    border-radius: 50%;
-  }
-
-  .about-note > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .about-note-label {
-    color: var(--about-accent);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .about-note strong {
-    display: block;
-    margin: 0.65rem 0 1.2rem;
-    color: var(--heading-color);
-    font-size: 1.28rem;
-    line-height: 1.35;
   }
 
   .about-section {
@@ -281,7 +228,7 @@ layout: page
     object-fit: contain;
   }
 
-  .institution-logo--yitu img {
+  .experience-logo--yitu img {
     filter: brightness(0) saturate(100%) invert(39%) sepia(86%) saturate(1292%)
       hue-rotate(184deg) brightness(91%) contrast(91%);
   }
@@ -330,7 +277,7 @@ layout: page
     --card-brand: var(--about-green);
     position: relative;
     display: grid;
-    grid-template-columns: 110px minmax(0, 1fr);
+    grid-template-columns: 76px minmax(0, 1fr);
     gap: 1.5rem;
     align-items: center;
     padding: clamp(1.3rem, 3vw, 1.8rem);
@@ -339,6 +286,30 @@ layout: page
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
     transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .experience-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 76px;
+    padding: 0;
+    border: 1px solid rgba(34, 35, 38, 0.06);
+    border-radius: 16px;
+    background: #fff;
+  }
+
+  .experience-logo img {
+    display: block;
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+  }
+
+  .experience-logo--tiktok img {
+    width: 40px;
+    height: 40px;
   }
 
   .experience-card:nth-child(1) {
@@ -355,9 +326,17 @@ layout: page
 
   .experience-head {
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .experience-meta {
+    display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+    width: 100%;
   }
 
   .experience-head h3 {
@@ -369,10 +348,29 @@ layout: page
 
   .experience-company {
     display: block;
-    margin-top: 0.28rem;
+    margin-top: 0.45rem;
+    color: var(--heading-color);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .experience-department {
+    display: block;
+    margin-top: 0.15rem;
     color: var(--text-muted-color);
     font-size: 0.9rem;
     line-height: 1.5;
+  }
+
+  .experience-location {
+    padding: 0.42rem 0.7rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card-brand) 10%, transparent);
+    color: var(--card-brand);
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
   }
 
   .experience-date {
@@ -482,11 +480,12 @@ layout: page
 
   .publication {
     position: relative;
+    width: 100%;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 88px;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;
     align-items: center;
-    padding: clamp(1.3rem, 3vw, 2rem);
+    padding: 1.4rem;
     overflow: hidden;
     border: 1px solid var(--main-border-color);
     border-left: 4px solid var(--about-accent);
@@ -494,16 +493,6 @@ layout: page
     background: var(--about-surface);
     line-height: 1.75;
     box-shadow: 0 10px 26px rgba(38, 31, 27, 0.05);
-  }
-
-  .publication-label {
-    display: block;
-    margin-bottom: 0.55rem;
-    color: var(--about-accent);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
   }
 
   .publication-title {
@@ -515,16 +504,9 @@ layout: page
     letter-spacing: -0.015em;
   }
 
-  .publication-authors {
-    margin: 0.8rem 0 0;
-    color: var(--text-muted-color);
-    font-size: 0.9rem;
-    line-height: 1.65;
-  }
-
   .publication-venue {
     display: inline-block;
-    margin-top: 0.85rem;
+    margin-bottom: 0.85rem;
     padding: 0.34rem 0.65rem;
     border-radius: 7px;
     background: var(--about-accent-soft);
@@ -533,21 +515,27 @@ layout: page
     font-weight: 700;
   }
 
-  .publication-mark {
-    color: var(--about-accent);
-    font-family: Georgia, serif;
-    font-size: 1.75rem;
-    font-weight: 700;
-    line-height: 0.95;
-    text-align: center;
+  .about-page .publication-title a {
+    color: var(--heading-color);
+    border-bottom: 0;
+    text-decoration: none;
   }
 
-  .publication-mark span {
-    display: block;
-    color: var(--text-muted-color);
-    font-size: 0.52em;
-    font-style: italic;
-    letter-spacing: 0.08em;
+  .about-page .publication-title a:hover {
+    color: var(--about-accent);
+  }
+
+  .award-entries {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .award-entries li + li {
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--main-border-color);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -639,13 +627,6 @@ layout: page
       grid-template-columns: 1fr;
     }
 
-    .publication-mark {
-      position: absolute;
-      right: 1rem;
-      bottom: 0.7rem;
-      opacity: 0.13;
-      font-size: 2.6rem;
-    }
 
   }
 </style>
@@ -671,16 +652,6 @@ layout: page
       </div>
     </div>
 
-    <aside class="about-card about-note">
-      <div>
-        <span class="about-note-label">Currently exploring</span>
-        <strong>AI agents, LLM systems &amp; machine learning</strong>
-      </div>
-      <div>
-        <p>Open to conversations and research collaborations.</p>
-        <p class="about-location">Based in Singapore</p>
-      </div>
-    </aside>
   </div>
 
   <section class="about-section">
@@ -709,6 +680,7 @@ layout: page
         <div>
           <h3>Nankai University</h3>
           <p class="education-degree">Bachelor of Engineering · Software Engineering</p>
+          <span class="education-meta">Tianjin, China</span>
           <span class="education-meta">GPA 3.72 / 4.0 · Top 13.3%</span>
         </div>
         <span class="education-period">Sep 2021 — Jun 2025</span>
@@ -716,7 +688,7 @@ layout: page
     </div>
   </section>
 
-  <section class="about-section">
+  <section class="about-section" id="experience">
     <div class="about-section-heading">
       <span>02</span>
       <h2>Experience</h2>
@@ -724,41 +696,53 @@ layout: page
 
     <div class="experience-list">
       <article class="experience-card">
-        <div class="institution-logo">
+        <div class="experience-logo experience-logo--tiktok">
           <img src="{{ '/assets/img/about/tiktok.svg' | relative_url }}" alt="TikTok logo">
         </div>
         <div class="experience-head">
           <div>
             <h3>Machine Learning Engineer Intern</h3>
-            <span class="experience-company">TikTok Shop Global E-Commerce · Platform Governance · Singapore</span>
+            <span class="experience-company">TikTok Shop Global E-Commerce</span>
+            <span class="experience-department">Platform Governance</span>
           </div>
-          <span class="experience-date">Aug 2026 — Present</span>
+          <div class="experience-meta">
+            <span class="experience-location">Singapore</span>
+            <span class="experience-date">Aug 2026 — Present</span>
+          </div>
         </div>
       </article>
 
       <article class="experience-card">
-        <div class="institution-logo">
-          <img src="{{ '/assets/img/about/dongchedi.png' | relative_url }}" alt="Dongchedi logo">
+        <div class="experience-logo">
+          <img src="{{ '/assets/img/about/bytedance-mark.svg' | relative_url }}" alt="ByteDance logo">
         </div>
         <div class="experience-head">
           <div>
             <h3>Algorithm Intern</h3>
-            <span class="experience-company">DCar-AI R&amp;D-Algorithm · Beijing</span>
+            <span class="experience-company">ByteDance · DCar</span>
+            <span class="experience-department">DCar-AI R&amp;D-Algorithm</span>
           </div>
-          <span class="experience-date">Apr 2026 — Jul 2026</span>
+          <div class="experience-meta">
+            <span class="experience-location">Beijing</span>
+            <span class="experience-date">Apr 2026 — Jul 2026</span>
+          </div>
         </div>
       </article>
 
       <article class="experience-card">
-        <div class="institution-logo institution-logo--yitu">
-          <img src="{{ '/assets/img/about/yitu.svg' | relative_url }}" alt="YITU Technology logo">
+        <div class="experience-logo experience-logo--yitu">
+          <img src="{{ '/assets/img/about/yitu-mark.svg' | relative_url }}" alt="YITU Technology logo">
         </div>
         <div class="experience-head">
           <div>
             <h3>Backend Development Intern</h3>
-            <span class="experience-company">Product R&amp;D Center · YITU Technology · Shanghai</span>
+            <span class="experience-company">YITU Technology</span>
+            <span class="experience-department">Product R&amp;D Center</span>
           </div>
-          <span class="experience-date">Oct 2024 — Jan 2025</span>
+          <div class="experience-meta">
+            <span class="experience-location">Shanghai</span>
+            <span class="experience-date">Oct 2024 — Jan 2025</span>
+          </div>
         </div>
       </article>
     </div>
@@ -772,25 +756,14 @@ layout: page
 
     <div class="publication">
       <div>
-        <span class="publication-label">Research paper</span>
-        <h3 class="publication-title">
-          UBench: Benchmarking Uncertainty in Large Language Models with Multiple Choice Questions
-        </h3>
-        <p class="publication-authors">
-          Xunzhi Wang, Zhuowei Zhang, <strong>Gaonan Chen</strong>, Qiongyu Li,
-          Bitong Luo, Zhixin Han, Haotian Wang, Zhiyu Li, Hang Gao, and Mengting Hu
-        </p>
         <span class="publication-venue">Findings of ACL · 2025</span>
-        <p class="publication-summary">A benchmark for evaluating uncertainty in large language models through multiple-choice questions and confidence intervals.</p>
+        <h3 class="publication-title">
+          <a href="https://aclanthology.org/2025.findings-acl.423/">UBench: Benchmarking Uncertainty in Large Language Models with Multiple Choice Questions</a>
+        </h3>
         <div class="about-links" aria-label="UBench resources">
           <a href="https://aclanthology.org/2025.findings-acl.423/">Paper</a>
-          <a href="https://aclanthology.org/2025.findings-acl.423.pdf">PDF</a>
           <a href="https://github.com/Cyno2232/UBENCH">Code</a>
         </div>
-      </div>
-      <div class="publication-mark" aria-hidden="true">
-        ACL
-        <span>'25</span>
       </div>
     </div>
   </section>
@@ -805,24 +778,20 @@ layout: page
         <time class="award-date" datetime="2024-09">2024.09</time>
         <span class="award-dot" aria-hidden="true"></span>
         <div class="award-content">
-          <span class="award-title">National Third Prize</span>
-          <span class="award-source">China Collegiate Computing Contest · AIGC Innovation Competition</span>
-        </div>
-      </li>
-      <li class="award-item">
-        <time class="award-date" datetime="2024-09">2024.09</time>
-        <span class="award-dot" aria-hidden="true"></span>
-        <div class="award-content">
-          <span class="award-title">Innovation Scholarship</span>
-          <span class="award-source">Nankai University</span>
-        </div>
-      </li>
-      <li class="award-item">
-        <time class="award-date" datetime="2024-09">2024.09</time>
-        <span class="award-dot" aria-hidden="true"></span>
-        <div class="award-content">
-          <span class="award-title">Academic Excellence Scholarship</span>
-          <span class="award-source">Nankai University</span>
+          <ul class="award-entries">
+            <li>
+              <span class="award-title">National Third Prize</span>
+              <span class="award-source">China Collegiate Computing Contest · AIGC Innovation Competition</span>
+            </li>
+            <li>
+              <span class="award-title">Innovation Scholarship</span>
+              <span class="award-source">Nankai University</span>
+            </li>
+            <li>
+              <span class="award-title">Academic Excellence Scholarship</span>
+              <span class="award-source">Nankai University</span>
+            </li>
+          </ul>
         </div>
       </li>
       <li class="award-item">
