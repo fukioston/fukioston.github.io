@@ -8,11 +8,11 @@ layout: default
   {% if page.layout == 'page' or page.collection == 'tabs' %}
     {% assign tab_key = page.title | downcase %}
     {% assign title = site.data.locales[lang].tabs[tab_key] | default: page.title %}
+    {% if page.layout != 'about-me' %}
     <h1 class="dynamic-title">
-      {% if title != 'About Me' %}
       {{ title }}
-    {% endif %}
     </h1>
+    {% endif %}
     <div class="content">
       {{ content }}
     </div>

@@ -21,9 +21,76 @@ layout: page
 
   .about-intro {
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(240px, 0.7fr);
+    grid-template-columns: minmax(0, 1.65fr) minmax(200px, 0.75fr);
     gap: 1.25rem;
-    margin: 1.25rem 0 3rem;
+    margin: 1.25rem 0 2.5rem;
+  }
+
+  .about-eyebrow {
+    display: block;
+    color: var(--about-accent);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .about-card .about-name {
+    margin: 0.55rem 0 0.75rem;
+    color: var(--heading-color);
+    font-size: clamp(2rem, 3vw, 2.7rem);
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+  }
+
+  .about-card .about-role {
+    margin-bottom: 1rem;
+    color: var(--heading-color);
+    font-weight: 600;
+    line-height: 1.55;
+  }
+
+  .about-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 1.3rem;
+  }
+
+  .about-page .about-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--main-border-color);
+    border-radius: 8px;
+    color: var(--heading-color);
+    background: var(--card-bg);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .about-page .about-links a:hover {
+    border-color: var(--about-accent);
+    color: var(--about-accent);
+  }
+
+  .about-page .about-links a:focus-visible {
+    outline: 2px solid var(--about-accent);
+    outline-offset: 3px;
+  }
+
+  .about-note .about-location {
+    margin-top: 1rem;
+    color: var(--text-muted-color);
+    font-size: 0.85rem;
+  }
+
+  .publication-summary {
+    margin: 0.85rem 0 0;
+    font-size: 0.92rem;
+    line-height: 1.7;
   }
 
   .about-card {
@@ -586,17 +653,22 @@ layout: page
 <div class="about-page">
   <div class="about-intro">
     <div class="about-card">
+      <span class="about-eyebrow">AI systems &amp; machine learning</span>
+      <h1 class="about-name">Gaonan Chen</h1>
+      <p class="about-role">Machine Learning Engineer Intern at TikTok<br>M.Sc. Student at Nanyang Technological University</p>
       <p>
-        Chen Gaonan received his B.Eng. in Software Engineering from Nankai University
-        and is now pursuing an M.Sc. in Signal Processing and Machine Learning at
-        Nanyang Technological University. He is also a student member of the China
-        Computer Federation (CCF).
+        I work on platform governance at TikTok Shop Global E-Commerce and study
+        Signal Processing and Machine Learning at NTU.
       </p>
       <p>
-        His interests span AI agents, large language models, machine learning, and
-        intelligent systems, with hands-on experience improving production agent
-        workflows and model-serving performance.
+        My interests include AI agents, large language models, and intelligent
+        systems, with experience improving agent workflows and model-serving performance.
       </p>
+      <div class="about-links" aria-label="Contact and profile links">
+        <a href="mailto:{{ site.social.email }}"><i class="fas fa-envelope" aria-hidden="true"></i>Email</a>
+        <a href="https://github.com/{{ site.github.username }}"><i class="fab fa-github" aria-hidden="true"></i>GitHub</a>
+        <a href="#publication"><i class="fas fa-book-open" aria-hidden="true"></i>Research</a>
+      </div>
     </div>
 
     <aside class="about-card about-note">
@@ -604,7 +676,10 @@ layout: page
         <span class="about-note-label">Currently exploring</span>
         <strong>AI agents, LLM systems &amp; machine learning</strong>
       </div>
-      <p>Always open to conversations and interesting collaborations.</p>
+      <div>
+        <p>Open to conversations and research collaborations.</p>
+        <p class="about-location">Based in Singapore</p>
+      </div>
     </aside>
   </div>
 
@@ -689,9 +764,39 @@ layout: page
     </div>
   </section>
 
-  <section class="about-section">
+  <section class="about-section" id="publication">
     <div class="about-section-heading">
       <span>03</span>
+      <h2>Publication</h2>
+    </div>
+
+    <div class="publication">
+      <div>
+        <span class="publication-label">Research paper</span>
+        <h3 class="publication-title">
+          UBench: Benchmarking Uncertainty in Large Language Models with Multiple Choice Questions
+        </h3>
+        <p class="publication-authors">
+          Xunzhi Wang, Zhuowei Zhang, <strong>Gaonan Chen</strong>, Qiongyu Li,
+          Bitong Luo, Zhixin Han, Haotian Wang, Zhiyu Li, Hang Gao, and Mengting Hu
+        </p>
+        <span class="publication-venue">Findings of ACL · 2025</span>
+        <p class="publication-summary">A benchmark for evaluating uncertainty in large language models through multiple-choice questions and confidence intervals.</p>
+        <div class="about-links" aria-label="UBench resources">
+          <a href="https://aclanthology.org/2025.findings-acl.423/">Paper</a>
+          <a href="https://aclanthology.org/2025.findings-acl.423.pdf">PDF</a>
+          <a href="https://github.com/Cyno2232/UBENCH">Code</a>
+        </div>
+      </div>
+      <div class="publication-mark" aria-hidden="true">
+        ACL
+        <span>'25</span>
+      </div>
+    </div>
+  </section>
+  <section class="about-section">
+    <div class="about-section-heading">
+      <span>04</span>
       <h2>Honors &amp; Awards</h2>
     </div>
 
@@ -729,30 +834,5 @@ layout: page
         </div>
       </li>
     </ul>
-  </section>
-
-  <section class="about-section">
-    <div class="about-section-heading">
-      <span>04</span>
-      <h2>Publication</h2>
-    </div>
-
-    <div class="publication">
-      <div>
-        <span class="publication-label">Research paper</span>
-        <h3 class="publication-title">
-          UBench: Benchmarking Uncertainty in Large Language Models with Multiple Choice Questions
-        </h3>
-        <p class="publication-authors">
-          Xunzhi Wang, Zhuowei Zhang, <strong>Gaonan Chen</strong>, Qiongyu Li,
-          Bitong Luo, Zhixin Han, Haotian Wang, Zhiyu Li, Hang Gao, and Mengting Hu
-        </p>
-        <span class="publication-venue">Findings of ACL · 2025</span>
-      </div>
-      <div class="publication-mark" aria-hidden="true">
-        ACL
-        <span>'25</span>
-      </div>
-    </div>
   </section>
 </div>
