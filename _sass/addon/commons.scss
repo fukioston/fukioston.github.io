@@ -1535,3 +1535,18 @@ search {
     }
   }
 } /* min-width: 1650px */
+
+/* Visitor statistics in the footer */
+footer .site-stats {
+  display: flex;
+  justify-content: center;
+  gap: 0.9rem;
+  white-space: nowrap;
+}
+
+@media all and (max-width: 849px) {
+  footer {
+    height: auto;
+    min-height: $footer-height-large;
+  }
+}

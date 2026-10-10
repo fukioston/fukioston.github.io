@@ -22,6 +22,19 @@
     {% endif %}
   </p>
 
+  {% if site.visitor_stats.busuanzi %}
+    <p class="site-stats">
+      <span id="busuanzi_container_site_pv" title="Total page views">
+        <i class="far fa-eye fa-fw" aria-hidden="true"></i>
+        <span id="busuanzi_value_site_pv">–</span> views
+      </span>
+      <span id="busuanzi_container_site_uv" title="Total visitors">
+        <i class="far fa-user fa-fw" aria-hidden="true"></i>
+        <span id="busuanzi_value_site_uv">–</span> visitors
+      </span>
+    </p>
+  {% endif %}
+
   <p>
     {%- capture _platform -%}
       <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>

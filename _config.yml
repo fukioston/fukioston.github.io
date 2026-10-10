@@ -47,6 +47,17 @@ google_site_verification: # fill in to your verification string
 # ↑ --------------------------
 # The end of `jekyll-seo-tag` settings
 
+# Visitor statistics
+visitor_stats:
+  # Site-wide PV/UV in the footer and per-post views, powered by busuanzi (no sign-up needed)
+  busuanzi: true
+  # Visitor map shown at the bottom of the About page.
+  # Sign up at https://clustrmaps.com or https://mapmyvisitors.com, add this site,
+  # then copy the `d=...` value from the embed code they give you into `id`.
+  map:
+    provider: clustrmaps # [clustrmaps|mapmyvisitors]
+    id: # leave empty to hide the map
+
 google_analytics:
   id: # fill in your Google Analytics ID
 

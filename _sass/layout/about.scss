@@ -652,3 +652,21 @@
     background: none;
   }
 }
+
+.visitor-map {
+  display: flex;
+  justify-content: center;
+  padding: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--main-border-color);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: var(--card-shadow);
+
+  img,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+}

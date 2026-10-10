@@ -83,5 +83,9 @@ layout: compress
     {% endif %}
 
     {% include_cached search-loader.html %}
+
+    {% if site.visitor_stats.busuanzi and jekyll.environment == 'production' %}
+      <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    {% endif %}
   </body>
 </html>

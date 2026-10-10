@@ -175,4 +175,25 @@ layout: page
       </li>
     </ul>
   </section>
+
+  {% if site.visitor_stats.map.id %}
+    {% assign map_script = 'map_v2.js' %}
+    {% if site.visitor_stats.map.provider == 'mapmyvisitors' %}
+      {% assign map_script = 'map.js' %}
+    {% endif %}
+    <section class="about-section" id="visitors">
+      <div class="about-section-heading">
+        <span>05</span>
+        <h2>Visitors</h2>
+      </div>
+
+      <div class="visitor-map">
+        <script
+          type="text/javascript"
+          id="{{ site.visitor_stats.map.provider }}"
+          src="https://{{ site.visitor_stats.map.provider }}.com/{{ map_script }}?d={{ site.visitor_stats.map.id }}&cl=ffffff&w=a"
+        ></script>
+      </div>
+    </section>
+  {% endif %}
 </div>
