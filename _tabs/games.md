@@ -26,4 +26,12 @@ vibe coding 等 AI 写代码的时候，无聊了就来玩一局吧。
 
 [▶ Play](/games/subway.html){: target="_blank" }
 
+## 🧩 休闲小游戏
+
+不联网、不花钱，打开就玩。
+
+- **俄罗斯方块**：现代规则——7 袋随机、SRS 旋转踢墙、暂存、5 块预览、落点阴影，T-Spin、连击、背靠背都有加分。[▶ Play](/games/tetris.html){: target="_blank" }
+- **贪吃蛇大作战**：和三条电脑蛇抢食物，让它们一头撞上你的身体；撞死的蛇会变成一地豆子。也有经典单人模式。[▶ Play](/games/snake.html){: target="_blank" }
+- **2048**：带滑动和合并动画，手滑了能撤销一步。[▶ Play](/games/2048.html){: target="_blank" }
+
 <small>City models: Kenney City Kit (CC0).</small>
