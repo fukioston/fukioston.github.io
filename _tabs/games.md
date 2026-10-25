@@ -26,6 +26,21 @@ vibe coding 等 AI 写代码的时候，无聊了就来玩一局吧。
 
 [▶ Play](/games/subway.html){: target="_blank" }
 
+## ♟️ 中国象棋 · ⚫ 五子棋
+
+让两个 AI 互相下棋，你在一旁看它们「思考」——每一步的推理过程实时滚动显示。
+
+- **AI 对 AI**：挂着看就行，适合 Agent 跑长任务的时候
+- **人机对弈**：亲自上阵，看看你和 AI 谁更会算
+- **双人对弈**：和旁边同样在等 build 的同事来一盘
+- 局面不行了 AI 会**主动认输**；你也可以
+- 每局自动保存（存在你的浏览器里），能复盘、能从任意一步接着下
+
+> AI 模式需要你自己的 [DeepSeek API Key](https://platform.deepseek.com/api_keys)：在游戏页右上角「🔑 API Key」里填写。Key 只保存在你的浏览器，只发送给 DeepSeek。双人对弈不需要 Key。
+{: .prompt-info }
+
+[▶ 中国象棋](/games/xiangqi.html){: target="_blank" } · [▶ 五子棋](/games/gomoku.html){: target="_blank" }
+
 ## 🧩 休闲小游戏
 
 不联网、不花钱，打开就玩。
