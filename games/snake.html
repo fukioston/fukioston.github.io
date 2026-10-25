@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>贪吃蛇大作战 · 游戏合集</title>
+<link rel="stylesheet" href="style.css?v=202610251742">
+<style>
+  body.arcade { --acc:#4ee26b; --glow:#0f5a3a; }
+  .arcade-stage { width:min(960px, 100%, calc((100vh - 190px) * 960 / 600)); aspect-ratio:960 / 600; }
+  .modes { display:flex; gap:10px; }
+  .mode { padding:10px 16px; border-radius:12px; border:2px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); color:#fff; cursor:pointer;
+          text-align:left; font:inherit; width:190px; }
+  .mode b { display:block; font-size:15px; margin-bottom:3px; }
+  .mode small { font-size:12px; color:#a9b3d6; line-height:1.5; }
+  .mode.on { border-color:var(--acc); background:rgba(78,226,107,.14); }
+</style>
+</head>
+<body class="arcade">
+<header class="topbar">
+  <a class="brand" href="/games/" title="返回游戏大厅"><span class="seal">弈</span><span class="brand-name">游戏合集</span></a>
+  <span class="crumb-sep">/</span>
+  <div class="page-title"><h1>贪吃蛇大作战</h1><div class="sub">和三条电脑蛇抢食物 · 撞死的蛇会变成一地金豆</div></div>
+  <a class="home-btn" href="/games/">← 返回大厅</a>
+</header>
+
+<div class="arcade-main">
+  <div class="arcade-stage" id="stage">
+    <canvas id="cv"></canvas>
+
+    <div class="ov" id="menuOv">
+      <h2>SNAKE</h2>
+      <div class="modes" id="modes">
+        <button class="mode on" data-mode="battle"><b>⚔️ 大作战</b><small>三条电脑蛇一起抢，撞到别人身体就死，让它们撞你</small></button>
+        <button class="mode" data-mode="classic"><b>🍎 经典</b><small>只有你一条蛇，撞墙或撞自己就结束，越吃越快</small></button>
+      </div>
+      <p id="menuBest"></p>
+      <div class="akeys">
+        <span><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> 转向</span><span><kbd>WASD</kbd> 也行</span>
+        <span><kbd>空格</kbd> 按住加速</span><span><kbd>P</kbd> 暂停</span>
+      </div>
+      <div class="abtns"><button class="abtn" id="btnStart">开 始</button></div>
+    </div>
+
+    <div class="ov" id="pauseOv" hidden>
+      <h2>暂停</h2>
+      <div class="abtns"><button class="abtn" id="btnResume">继 续</button><button class="abtn ghost" id="btnMenu2">回到菜单</button></div>
+    </div>
+
+    <div class="ov" id="overOv" hidden>
+      <h2 id="overTitle">GAME OVER</h2>
+      <p id="overReason"></p>
+      <div class="big" id="overScore">0</div>
+      <div class="newrec" id="overNew" hidden>★ 新纪录 ★</div>
+      <div class="stats"><div>长度<b id="overLen">0</b></div><div>击杀<b id="overKills">0</b></div><div>最高分<b id="overBest">0</b></div></div>
+      <div class="abtns"><button class="abtn" id="btnAgain">再来一局</button><button class="abtn ghost" id="btnMenu">换模式</button></div>
+    </div>
+  </div>
+
+  <div class="pad" style="--pad-cols:4">
+    <button data-d="left">←</button><button data-d="up">↑</button><button data-d="down">↓</button><button data-d="right">→</button>
+  </div>
+  <div class="arcade-bar">
+    <span class="grow">手机上：在画面上滑动转向。金色的豆子分数更高；大作战里电脑蛇死后会掉一地豆子。</span>
+    <button class="btn small mute-btn" id="btnMute"></button>
+  </div>
+</div>
+
+<script src="fx.js?v=202610251742"></script>
+<script src="snake.js?v=202610251742"></script>
+</body>
+</html>

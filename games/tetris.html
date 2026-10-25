@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>俄罗斯方块 · 游戏合集</title>
+<link rel="stylesheet" href="style.css?v=202610251742">
+<style>
+  body.arcade { --acc:#33e6ff; --glow:#3a1f8a; }
+  .arcade-stage { width:min(660px, 100%, calc((100vh - 190px) * 660 / 640)); aspect-ratio:660 / 640; }
+</style>
+</head>
+<body class="arcade">
+<header class="topbar">
+  <a class="brand" href="/games/" title="返回游戏大厅"><span class="seal">弈</span><span class="brand-name">游戏合集</span></a>
+  <span class="crumb-sep">/</span>
+  <div class="page-title"><h1>俄罗斯方块</h1><div class="sub">7 种方块随机袋 · SRS 旋转 · 暂存 · T-Spin · 连击</div></div>
+  <a class="home-btn" href="/games/">← 返回大厅</a>
+</header>
+
+<div class="arcade-main">
+  <div class="arcade-stage" id="stage">
+    <canvas id="cv"></canvas>
+
+    <div class="ov" id="menuOv">
+      <h2>TETRIS</h2>
+      <p id="menuBest"></p>
+      <div class="akeys">
+        <span><kbd>←</kbd><kbd>→</kbd> 移动</span><span><kbd>↓</kbd> 软降</span>
+        <span><kbd>↑</kbd><kbd>X</kbd> 顺时针转</span><span><kbd>Z</kbd> 逆时针转</span>
+        <span><kbd>空格</kbd> 硬降</span><span><kbd>C</kbd><kbd>Shift</kbd> 暂存</span>
+        <span><kbd>P</kbd> 暂停</span><span></span>
+      </div>
+      <div class="abtns"><button class="abtn" id="btnStart">开 始</button></div>
+    </div>
+
+    <div class="ov" id="pauseOv" hidden>
+      <h2>暂停</h2>
+      <div class="abtns"><button class="abtn" id="btnResume">继 续</button><button class="abtn ghost" id="btnRestart2">重新开始</button></div>
+    </div>
+
+    <div class="ov" id="overOv" hidden>
+      <h2>GAME OVER</h2>
+      <div class="big" id="overScore">0</div>
+      <div class="newrec" id="overNew" hidden>★ 新纪录 ★</div>
+      <div class="stats"><div>消行<b id="overLines">0</b></div><div>等级<b id="overLevel">1</b></div><div>最高分<b id="overBest">0</b></div></div>
+      <div class="abtns"><button class="abtn" id="btnAgain">再来一局</button><a class="abtn ghost" href="/games/">返回大厅</a></div>
+    </div>
+  </div>
+
+  <div class="pad" style="--pad-cols:6">
+    <button data-k="hold">暂存</button><button data-k="left">←</button><button data-k="rotate">↻</button>
+    <button data-k="right">→</button><button data-k="soft">↓</button><button data-k="hard">⤓</button>
+  </div>
+  <div class="arcade-bar">
+    <span class="grow">手机上：点屏幕旋转，左右拖动移动，快速下滑硬降。每 10 行升一级，越来越快。</span>
+    <button class="btn small mute-btn" id="btnMute"></button>
+  </div>
+</div>
+
+<script src="fx.js?v=202610251742"></script>
+<script src="tetris.js?v=202610251742"></script>
+</body>
+</html>

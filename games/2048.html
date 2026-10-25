@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>2048 · 游戏合集</title>
+<link rel="stylesheet" href="style.css?v=202610251742">
+<style>
+  body.arcade { --acc:#ffd23a; --glow:#5a3a10; }
+  .g-wrap { width:min(500px, 100%); display:flex; flex-direction:column; gap:14px; }
+  .g-head { display:flex; align-items:center; gap:10px; }
+  .g-title { font:900 54px/1 "Arial Rounded MT Bold", -apple-system, sans-serif; color:var(--acc); text-shadow:0 0 22px rgba(255,210,58,.5); margin-right:auto; }
+  .g-box { min-width:86px; padding:8px 12px; border-radius:12px; background:rgba(255,255,255,.07); text-align:center; position:relative; }
+  .g-box span { display:block; font-size:11px; font-weight:800; color:#a9b3d6; letter-spacing:1px; }
+  .g-box b { font-size:22px; font-variant-numeric:tabular-nums; }
+  .g-delta { position:absolute; left:0; right:0; top:22px; font-weight:900; color:#7dff6a; animation:g-up .8s ease-out forwards; pointer-events:none; }
+  @keyframes g-up { to { transform:translateY(-34px); opacity:0; } }
+  .g-tools { display:flex; gap:10px; align-items:center; }
+  .g-tools .grow { flex:1; font-size:13px; color:#a9b3d6; }
+  .g-tools .btn { background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.18); color:#fff; }
+  .board { --gap:12px; --size:calc((100% - var(--gap) * 5) / 4); position:relative; width:100%; aspect-ratio:1; border-radius:18px; padding:var(--gap);
+           background:#151838; box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 0 50px rgba(255,210,58,.12), 0 24px 60px rgba(0,0,0,.5);
+           touch-action:none; user-select:none; -webkit-user-select:none; overflow:hidden; }
+  .cell { position:absolute; width:var(--size); height:var(--size); border-radius:10px; background:rgba(255,255,255,.05); }
+  .tile { position:absolute; width:var(--size); height:var(--size); border-radius:10px; display:grid; place-items:center;
+          left:calc(var(--gap) + var(--x) * (var(--size) + var(--gap))); top:calc(var(--gap) + var(--y) * (var(--size) + var(--gap)));
+          transition:left .11s ease-in-out, top .11s ease-in-out; z-index:1;
+          font:900 clamp(22px, 7.5vw, 42px)/1 "Arial Rounded MT Bold", -apple-system, sans-serif; font-variant-numeric:tabular-nums; }
+  .tile.new { animation:g-appear .18s ease-out .08s both; }
+  .tile.merged { z-index:2; animation:g-pop .2s ease-out; }
+  @keyframes g-appear { from { transform:scale(0); } to { transform:scale(1); } }
+  @keyframes g-pop { 0% { transform:scale(1); } 50% { transform:scale(1.2); } 100% { transform:scale(1); } }
+  .tile[data-d="3"] { font-size:clamp(20px, 6.5vw, 36px); }
+  .tile[data-d="4"] { font-size:clamp(16px, 5.2vw, 29px); }
+  .tile[data-d="5"] { font-size:clamp(13px, 4.2vw, 23px); }
+  .board .ov { border-radius:18px; }
+</style>
+</head>
+<body class="arcade">
+<header class="topbar">
+  <a class="brand" href="/games/" title="返回游戏大厅"><span class="seal">弈</span><span class="brand-name">游戏合集</span></a>
+  <span class="crumb-sep">/</span>
+  <div class="page-title"><h1>2048</h1><div class="sub">滑动合并相同的数字，凑出 2048</div></div>
+  <a class="home-btn" href="/games/">← 返回大厅</a>
+</header>
+
+<div class="arcade-main">
+  <div class="g-wrap">
+    <div class="g-head">
+      <div class="g-title">2048</div>
+      <div class="g-box"><span>分数</span><b id="score">0</b></div>
+      <div class="g-box"><span>最高</span><b id="best">0</b></div>
+    </div>
+    <div class="g-tools">
+      <span class="grow">方向键 / WASD / 滑动</span>
+      <button class="btn small" id="btnUndo">↶ 撤销</button>
+      <button class="btn small" id="btnNew">新游戏</button>
+    </div>
+    <div class="board" id="board">
+      <div class="ov" id="winOv" hidden>
+        <h2>2048！</h2>
+        <p>合成了 2048，还要继续冲 4096 吗？</p>
+        <div class="abtns"><button class="abtn" id="btnKeep">继续玩</button><button class="abtn ghost" id="btnNew2">新游戏</button></div>
+      </div>
+      <div class="ov" id="overOv" hidden>
+        <h2>没地方了</h2>
+        <div class="big" id="overScore">0</div>
+        <div class="newrec" id="overNew" hidden>★ 新纪录 ★</div>
+        <p id="overMax"></p>
+        <div class="abtns"><button class="abtn" id="btnAgain">再来一局</button><button class="abtn ghost" id="btnUndo2">撤销一步</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="arcade-bar" style="max-width:500px">
+    <span class="grow">每次滑动后会随机出现一个 2（偶尔是 4）。撤销只能退一步。</span>
+    <button class="btn small mute-btn" id="btnMute"></button>
+  </div>
+</div>
+
+<script src="fx.js?v=202610251742"></script>
+<script src="2048.js?v=202610251742"></script>
+</body>
+</html>

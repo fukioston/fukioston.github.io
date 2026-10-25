@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中国象棋 · DeepSeek 游戏合集</title>
+<link rel="stylesheet" href="style.css?v=202610251742">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/games/" title="返回游戏大厅"><span class="seal">弈</span><span class="brand-name">游戏合集</span></a>
+  <span class="crumb-sep">/</span>
+  <div class="page-title"><h1>中国象棋</h1><div class="sub">AI 对 AI，或者你亲自上阵</div></div>
+  <a class="home-btn" href="/games/">← 返回大厅</a>
+</header>
+
+<main>
+  <div class="stage">
+    <div class="pbar" id="barTop"></div>
+    <div class="board-wrap">
+      <canvas id="board"></canvas>
+      <div class="fx-layer" id="fx"></div>
+      <div class="banner" id="banner" hidden></div>
+    </div>
+    <div class="pbar" id="barBottom"></div>
+    <div class="controls">
+      <button class="btn primary" id="btnNew">▶ 开始新对战</button>
+      <button class="btn" id="btnRun">继续</button>
+      <button class="btn" id="btnStep">走一步</button>
+      <button class="btn" id="btnResign">🏳 认输</button>
+      <button class="btn mute-btn" id="btnMute"></button>
+      <div id="status"></div>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="tabs">
+      <button class="tab active" data-tab="moves">棋谱</button>
+      <button class="tab" data-tab="games">对局记录</button>
+      <button class="tab" data-tab="settings">设置</button>
+    </div>
+
+    <button class="jump-latest" id="jumpLatest" hidden onclick="scrollLog(true)">↓ 看最新思考</button>
+    <div class="pane active" id="pane-moves">
+      <div id="replayCard" hidden>
+        <div class="replay-head" id="replayTitle"></div>
+        <div class="replay-sub" id="replaySub"></div>
+        <div class="replay-nav">
+          <button class="btn small" data-nav="first">⏮</button>
+          <button class="btn small" data-nav="prev">◀ 上一步</button>
+          <button class="btn small" data-nav="next">下一步 ▶</button>
+          <button class="btn small" data-nav="last">⏭</button>
+          <button class="btn small" id="btnAutoplay">自动播放</button>
+          <button class="btn small" id="btnExitReplay">返回对战</button>
+          <button class="btn small primary" id="btnResume">从这步接着下</button>
+        </div>
+        <div class="progress"><div id="replayProgress"></div></div>
+        <div id="replayMove"></div>
+        <div id="replayList"></div>
+      </div>
+      <div id="log"></div>
+    </div>
+
+    <div class="pane" id="pane-games">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span class="note">每走一步自动保存，中途断掉的对局也能复盘。</span>
+        <button class="btn small" id="btnGames">刷新</button>
+      </div>
+      <div id="games"></div>
+    </div>
+
+    <div class="pane" id="pane-settings">
+      <div class="group">
+        <h3>对阵双方</h3>
+        <div class="side-row">
+          <div class="lab"><span class="dot red"></span>红方</div>
+          <div class="side-fields">
+            <div class="seg" data-for="redPlayer"><button data-v="ai" class="on">AI</button><button data-v="human">我来下</button></div>
+            <select id="redModel" class="model" title="模型"></select>
+            <select id="redEffort" class="effort" title="思考强度（V4 系列）"></select>
+            <input type="number" id="redTemp" value="0.7" step="0.1" min="0" max="2" title="温度（思考模型不生效）">
+          </div>
+        </div>
+        <div class="side-row">
+          <div class="lab"><span class="dot black"></span>黑方</div>
+          <div class="side-fields">
+            <div class="seg" data-for="blackPlayer"><button data-v="ai" class="on">AI</button><button data-v="human">我来下</button></div>
+            <select id="blackModel" class="model" title="模型"></select>
+            <select id="blackEffort" class="effort" title="思考强度（V4 系列）"></select>
+            <input type="number" id="blackTemp" value="0.7" step="0.1" min="0" max="2" title="温度（思考模型不生效）">
+          </div>
+        </div>
+        <input type="hidden" id="redPlayer" value="ai"><input type="hidden" id="blackPlayer" value="ai">
+      </div>
+      <div class="group">
+        <h3>节奏</h3>
+        <div class="kv"><span>走子间隔</span><input type="number" id="delay" value="800" step="100" min="0"> 毫秒</div>
+        <div class="kv"><span>步数上限</span><input type="number" id="maxPlies" value="300" step="10" min="10"> 步后判和</div>
+      </div>
+      <div class="group note">
+        <h3>说明</h3>
+        · DeepSeek 账户余额：<b id="balanceLine">查询中…</b>（低于 ¥5 时页面顶部会提醒）<br>
+        · DeepSeek V4 Pro 棋力最强，V4.1 Flash 更快；两者都能选思考强度：「不思考」几秒一步，「最深」最强也最慢。reasoner、chat 是 Flash 的旧接口名：前者深度思考，后者不思考、最快。<br>
+        · 自己下：把一方切到「我来下」，先点棋子再点落点；执黑时棋盘自动翻转。<br>
+        · AI 只能从合法着法中选；连续 3 次给出不可用着法时随机走一步，并在棋谱里标出。
+      </div>
+    </div>
+  </aside>
+</main>
+
+<script src="byok.js?v=202610251742"></script>
+<script src="models.js?v=202610251742"></script>
+<script src="engine.js?v=202610251742"></script>
+<script src="fx.js?v=202610251742"></script>
+<script>
+const X = window.Xiangqi;
+const $ = id => document.getElementById(id);
+const canvas = $('board'), ctx = canvas.getContext('2d');
+const CELL = 60, PAD = 54, W = PAD * 2 + 8 * CELL, H = PAD * 2 + 9 * CELL;
+const SIDE_CN = { red: '红方', black: '黑方' };
+const PIECE_FONT = '"Kaiti SC", STKaiti, KaiTi, "Songti SC", serif';
+const ANIM_MS = 280;
+
+// 高清屏缩放
+const dpr = window.devicePixelRatio || 1;
+canvas.width = W * dpr; canvas.height = H * dpr;
+ctx.scale(dpr, dpr);
+
+let game, running = false, busy = false, gameId = 0;
+let replay = null;   // 复盘状态 { rec, idx, timer }
+let selected = null; // 玩家选中的棋子 { r, c, targets }
+let anim = null;     // 走子动画 { m, piece, t0 }
+let thinkStart = 0, thinkNote = '';
+let liveCtl = null; // 当前 DeepSeek 流式请求，用于重新开局时中止
+const isHuman = side => $(side + 'Player').value === 'human';
+const flipped = () => isHuman('black') && !isHuman('red'); // 玩家执黑时黑方在下
+const other = side => (side === 'red' ? 'black' : 'red');
+
+function newGame() {
+  gameId++;
+  game = { board: X.initialBoard(), turn: 'red', history: [], lastMove: null, over: null, winner: null,
+           reps: {}, record: null, captured: { red: [], black: [] } };
+  game.reps[X.boardKey(game.board, 'red')] = 1;
+  running = false; busy = false; selected = null; anim = null;
+  if (liveCtl) liveCtl.abort();
+  $('log').innerHTML = '<div class="empty">点「开始新对战」，棋谱和 AI 的思路会显示在这里</div>';
+  render(); updateUI();
+}
+
+// ---------- 绘制 ----------
+const px = c => PAD + (flipped() ? 8 - c : c) * CELL, py = r => PAD + (flipped() ? 9 - r : r) * CELL;
+
+let bgCache = null, bgCacheFlip = null;
+function boardBackground() {
+  if (bgCache && bgCacheFlip === flipped()) return bgCache;
+  const off = document.createElement('canvas');
+  off.width = W * dpr; off.height = H * dpr;
+  const g = off.getContext('2d');
+  g.scale(dpr, dpr);
+
+  // 木纹底
+  const grad = g.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, '#f1d29b'); grad.addColorStop(.5, '#e6bf80'); grad.addColorStop(1, '#dcb06c');
+  g.fillStyle = grad; g.fillRect(0, 0, W, H);
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 70; i++) {
+    const y = rnd() * H, amp = 2 + rnd() * 6, freq = .005 + rnd() * .012, ph = rnd() * 6;
+    g.strokeStyle = `rgba(${120 + rnd() * 40 | 0}, ${70 + rnd() * 30 | 0}, 20, ${.04 + rnd() * .07})`;
+    g.lineWidth = .6 + rnd() * 1.6;
+    g.beginPath();
+    for (let x = 0; x <= W; x += 8) g.lineTo(x, y + Math.sin(x * freq + ph) * amp);
+    g.stroke();
+  }
+  const vign = g.createRadialGradient(W / 2, H / 2, H * .3, W / 2, H / 2, H * .75);
+  vign.addColorStop(0, 'rgba(255,240,210,0)'); vign.addColorStop(1, 'rgba(90,50,15,.18)');
+  g.fillStyle = vign; g.fillRect(0, 0, W, H);
+
+  // 线条
+  const ink = '#5b3a1a';
+  g.strokeStyle = ink; g.lineCap = 'round';
+  const L = (r1, c1, r2, c2) => { g.beginPath(); g.moveTo(px(c1), py(r1)); g.lineTo(px(c2), py(r2)); g.stroke(); };
+  g.lineWidth = 1.3;
+  for (let r = 0; r < 10; r++) L(r, 0, r, 8);
+  for (let c = 0; c < 9; c++) {
+    if (c === 0 || c === 8) L(0, c, 9, c);
+    else { L(0, c, 4, c); L(5, c, 9, c); }
+  }
+  L(0, 3, 2, 5); L(0, 5, 2, 3); L(7, 3, 9, 5); L(7, 5, 9, 3);
+  g.lineWidth = 3; g.strokeRect(PAD - 7, PAD - 7, 8 * CELL + 14, 9 * CELL + 14);
+
+  // 炮位、兵位标记
+  g.lineWidth = 1.3;
+  const mark = (r, c) => {
+    const x = px(c), y = py(r), d = 4, l = 10;
+    for (const sx of [-1, 1]) {
+      if ((c === 0 && sx < 0) || (c === 8 && sx > 0)) continue;
+      for (const sy of [-1, 1]) {
+        g.beginPath();
+        g.moveTo(x + sx * (d + l), y + sy * d); g.lineTo(x + sx * d, y + sy * d); g.lineTo(x + sx * d, y + sy * (d + l));
+        g.stroke();
+      }
+    }
+  };
+  for (const r of [2, 7]) for (const c of [1, 7]) mark(r, c);
+  for (const r of [3, 6]) for (const c of [0, 2, 4, 6, 8]) mark(r, c);
+
+  // 河界
+  g.fillStyle = 'rgba(80,45,15,.78)'; g.font = `600 30px ${PIECE_FONT}`;
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText('楚　河', PAD + 2 * CELL, PAD + 4.5 * CELL);
+  g.fillText('漢　界', PAD + 6 * CELL, PAD + 4.5 * CELL);
+
+  // 路数
+  g.font = '600 13px -apple-system, sans-serif'; g.fillStyle = 'rgba(80,45,15,.7)';
+  for (let c = 0; c < 9; c++) {
+    const blackLabel = String(c + 1), redLabel = '九八七六五四三二一'[c];
+    g.fillText(flipped() ? redLabel : blackLabel, px(c), 15);
+    g.fillText(flipped() ? blackLabel : redLabel, px(c), H - 14);
+  }
+  bgCache = off; bgCacheFlip = flipped();
+  return off;
+}
+
+function drawPiece(p, x, y, lifted) {
+  const red = X.isRed(p), color = red ? '#b8322a' : '#1f1d1b', R = 26;
+  ctx.save();
+  ctx.shadowColor = 'rgba(40,20,5,.45)';
+  ctx.shadowBlur = lifted ? 14 : 5; ctx.shadowOffsetY = lifted ? 7 : 3;
+  if (lifted) y -= 3;
+  const body = ctx.createRadialGradient(x - 8, y - 10, 3, x, y, R);
+  body.addColorStop(0, '#fff9ea'); body.addColorStop(.65, '#f1dcae'); body.addColorStop(1, '#d6b072');
+  ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fillStyle = body; ctx.fill();
+  ctx.restore();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = '#9b7140';
+  ctx.beginPath(); ctx.arc(x, y, R - .5, 0, Math.PI * 2); ctx.stroke();
+  ctx.lineWidth = 1.6; ctx.strokeStyle = color;
+  ctx.beginPath(); ctx.arc(x, y, R - 5, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = color; ctx.font = `700 27px ${PIECE_FONT}`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(X.NAMES[p], x, y + 1.5);
+}
+
+function corners(x, y, color) {
+  const d = 27, l = 9;
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(x + sx * d, y + sy * (d - l)); ctx.lineTo(x + sx * d, y + sy * d); ctx.lineTo(x + sx * (d - l), y + sy * d);
+    ctx.stroke();
+  }
+}
+
+function draw(board, lm, sel) {
+  ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(boardBackground(), 0, 0, W, H);
+
+  if (lm) { // 上一步：起点淡圈、终点角标
+    ctx.fillStyle = 'rgba(37,99,235,.18)';
+    ctx.beginPath(); ctx.arc(px(lm[1]), py(lm[0]), 9, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // 被将军时王的位置泛红
+  for (const side of ['red', 'black']) {
+    const k = side === 'red' ? 'K' : 'k';
+    if (!X.isInCheck(board, side === 'red')) continue;
+    for (let r = 0; r < 10; r++) for (let c = 3; c <= 5; c++) if (board[r][c] === k) {
+      const glow = ctx.createRadialGradient(px(c), py(r), 20, px(c), py(r), 44);
+      glow.addColorStop(0, 'rgba(220,40,30,.65)'); glow.addColorStop(1, 'rgba(220,40,30,0)');
+      ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(px(c), py(r), 44, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  let t = 1;
+  if (anim) t = Math.min(1, (performance.now() - anim.t0) / ANIM_MS);
+  for (let r = 0; r < 10; r++) for (let c = 0; c < 9; c++) {
+    const p = board[r][c];
+    if (!p) continue;
+    if (anim && t < 1 && r === anim.m[2] && c === anim.m[3]) continue;
+    drawPiece(p, px(c), py(r), sel && sel.r === r && sel.c === c);
+  }
+  if (lm && !(anim && t < 1)) corners(px(lm[3]), py(lm[2]), '#2563eb');
+
+  if (sel) {
+    for (const m of sel.targets) {
+      const x = px(m[3]), y = py(m[2]);
+      if (board[m[2]][m[3]]) corners(x, y, '#1f9d63');
+      else { ctx.fillStyle = 'rgba(31,157,99,.8)'; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill(); }
+    }
+  }
+
+  if (anim && t < 1) {
+    const e = 1 - Math.pow(1 - t, 3);
+    const [r1, c1, r2, c2] = anim.m;
+    drawPiece(anim.piece, px(c1) + (px(c2) - px(c1)) * e, py(r1) + (py(r2) - py(r1)) * e, true);
+  }
+}
+
+function animateMove(m, piece) {
+  anim = { m, piece, t0: performance.now() };
+  const tick = () => {
+    render();
+    if (anim && performance.now() - anim.t0 < ANIM_MS) requestAnimationFrame(tick);
+    else { anim = null; render(); }
+  };
+  requestAnimationFrame(tick);
+}
+
+// ---------- 界面 ----------
+function replayBoard(idx) {
+  const b = X.initialBoard();
+  for (let i = 0; i < idx; i++) X.applyMove(b, X.fromIccs(replay.rec.moves[i].iccs));
+  return b;
+}
+
+function render() {
+  if (replay) draw(replayBoard(replay.idx), replay.idx ? X.fromIccs(replay.rec.moves[replay.idx - 1].iccs) : null);
+  else draw(game.board, game.lastMove, selected);
+  canvas.classList.toggle('clickable', !replay && !game.over && isHuman(game.turn) && !busy);
+}
+
+function fillBar(el, side) {
+  let name, human, caps, active = false, badge = '', badgeCls = '';
+  if (replay) {
+    const rec = replay.rec;
+    name = side === 'red' ? rec.redModel : rec.blackModel;
+    human = name === '玩家';
+    caps = rec.moves.slice(0, replay.idx).filter(m => m.side === side && m.captured).map(m => m.captured);
+    active = replay.idx < rec.moves.length && (replay.idx % 2 === 0) === (side === 'red');
+  } else {
+    human = isHuman(side);
+    name = human ? '由你执棋' : Models.display($(side + 'Model').value.trim() || Models.DEFAULT_MODEL, $(side + 'Effort').value);
+    caps = game.captured[side];
+    if (game.over) {
+      badge = game.winner === side ? '🏆 胜' : game.winner === 'draw' ? '和' : '负';
+      badgeCls = game.winner === side ? 'win' : game.winner === 'draw' ? 'draw' : 'lose';
+    } else if (game.turn === side) {
+      active = true;
+      if (human) { badge = '轮到你'; badgeCls = 'you'; }
+      else if (busy) { badge = `<span class="spinner"></span>思考中 ${Math.floor((Date.now() - thinkStart) / 1000)}s`; badgeCls = 'think'; }
+    }
+  }
+  el.className = 'pbar ' + side + (active ? ' active' : '');
+  el.innerHTML = `<div class="avatar">${side === 'red' ? '帅' : '将'}</div>`
+    + `<div class="pinfo"><div class="pname">${SIDE_CN[side]}<span class="ptag">${human ? '玩家' : 'AI'}</span></div>`
+    + `<div class="psub" title="${esc(name)}">${esc(name)}</div></div>`
+    + `<div class="caps">${caps.map(p => `<span class="cap ${X.isRed(p) ? 'r' : 'b'}">${X.NAMES[p]}</span>`).join('')}</div>`
+    + `<div class="badge ${badgeCls}">${badge}</div>`;
+}
+
+function renderBars() {
+  const bottom = flipped() ? 'black' : 'red';
+  fillBar($('barTop'), other(bottom));
+  fillBar($('barBottom'), bottom);
+}
+setInterval(() => { if (busy && !replay) renderBars(); }, 1000);
+
+function updateUI(note) {
+  if (note !== undefined) thinkNote = note;
+  $('btnRun').textContent = running ? '⏸ 暂停' : '继续';
+  $('btnRun').disabled = !!game.over;
+  $('btnStep').disabled = !!game.over || busy || running || isHuman(game.turn);
+  $('btnResign').disabled = !!game.over || !!replay || !game.history.length || !Object.keys(SIDE_CN).some(isHuman);
+  let s;
+  if (replay) s = '复盘中 · 对战已暂停';
+  else if (game.over) s = '对局结束';
+  else {
+    s = `第 <b>${Math.floor(game.history.length / 2) + 1}</b> 回合`;
+    if (X.isInCheck(game.board, game.turn === 'red')) s += ` · <span class="warn">${SIDE_CN[game.turn]}被将军</span>`;
+    if (busy && thinkNote) s += ' · ' + thinkNote;
+    else if (isHuman(game.turn)) s += ' · 先点棋子，再点落点';
+    else if (!running && game.history.length) s += ' · 已暂停';
+  }
+  $('status').innerHTML = s;
+  const showBanner = !replay && game.over;
+  $('banner').hidden = !showBanner;
+  if (showBanner) {
+    const head = game.winner === 'draw' ? '和棋' : `${SIDE_CN[game.winner]}胜`;
+    $('banner').innerHTML = `${head}<small>${esc(game.over)} · 共 ${game.history.length} 步</small>`;
+  }
+  renderBars();
+}
+
+function logEntry(cls, html) {
+  const log = $('log');
+  if (log.querySelector('.empty')) log.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'entry ' + cls;
+  div.innerHTML = html;
+  log.appendChild(div);
+  scrollLog();
+}
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+// ---------- 调用 DeepSeek ----------
+function buildPrompt(side, moves) {
+  const b = game.board, red = side === 'red';
+  const recent = game.history.slice(-20).map((h, i, arr) => {
+    const ply = game.history.length - arr.length + i;
+    return `${ply % 2 === 0 ? '红' : '黑'} ${h.chinese}(${h.iccs})`;
+  }).join('，') || '（开局）';
+  const last = game.history[game.history.length - 1];
+  const keys = new Set(moves.map(m => X.toIccs(m)));
+  const list = X.analyzeMoves(b, side).filter(a => keys.has(X.toIccs(a.m)))
+    .map(a => `${X.toIccs(a.m)}(${X.toChinese(b, a.m)})${a.tags.length ? ' [' + a.tags.join(' ') + ']' : ''}`).join('\n');
+  const danger = (r) => X.threatened(b, r).map(t => X.pieceName(t.p, t.r, t.c) + (t.guard ? '（有根，但可被低价子吃）' : '（无根）')).join('、') || '无';
+  const me = X.material(b, red), op = X.material(b, !red);
+  const check = X.isInCheck(b, red) ? '\n⚠ 你正被将军，必须应将（列表里都是合法的应将着法）。' : '';
+  return `你执${SIDE_CN[side]}（${red ? '大写字母' : '小写字母'}）。第 ${Math.floor(game.history.length / 2) + 1} 回合。
+
+【局面】大写=红，小写=黑；K帅/将 A仕/士 B相/象 N马 R车 C炮 P兵/卒。红方在下（第0行），黑方在上（第9行）。
+${X.boardText(b)}
+坐标：列 a-i（红方视角从左到右），行 0-9。着法写成"起点终点"，如 h2e2。
+
+【对局】最近着法：${recent}
+对方上一步：${last ? last.chinese + '(' + last.iccs + ')' : '无（你先走）'}${check}
+
+【程序算好的事实，可直接相信】
+- 子力（车9 炮4.5 马4 相仕2 兵1/过河2）：你 ${me}，对方 ${op}
+- 你现在受威胁的子：${danger(red)}
+- 对方现在受威胁的子（可能可以吃）：${danger(!red)}
+
+【全部合法着法】按程序粗评从好到差排序；方括号是走完这步后的事实：
+吃X=吃掉对方的子；将军/绝杀!/困毙!；⚠…=走完后你的这个子会被白吃或被低价子兑掉（程序只看一步，对方吃回后你能否反吃要你自己判断）。
+${list}
+
+请按这个顺序想：
+1. 有「绝杀!」直接走。
+2. 对方上一步在威胁什么？有没有子要被吃、有没有杀棋要防？
+3. 能不能安全吃子（不带 ⚠，或吃的子比可能丢的子更值钱）？
+4. 没有战术机会时，出动子力、占要道、控制中路、保护将帅，别无意义地来回走。
+程序排序只看一步，不一定对；不要因为它排第一就选，但带 ⚠ 的着法要有充分理由才走。
+
+认输规则：只有在局面确实无法挽回时才认输，例如对方有你挡不住的杀棋，或你落后至少一个车且没有任何反击手段。认输时 "resign" 写 true（move 仍随便填一步合法着法）；否则一律写 false，绝不轻易放弃。
+
+只输出一个 JSON 对象：{"analysis":"两三句话的局面分析","move":"h2e2","reason":"一句话说明这步的目的","resign":false}`;
+}
+
+const SYSTEM = '你是中国象棋特级大师，棋风稳健、计算精确。每步棋都先防守后进攻：先看清对方的威胁（将军、捉子、抽将、杀棋），再找自己的吃子与进攻机会，绝不白白送子。用户消息里程序算好的合法着法和标签是准确的，你只能从合法着法中选择。最后严格按要求只输出 JSON，不要输出其他文字。';
+
+// 实时显示正在进行的思考过程
+function createLive(side, model, attempt) {
+  removeLive();
+  const log = $('log');
+  if (log.querySelector('.empty')) log.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'entry live ' + side;
+  div.id = 'live';
+  div.innerHTML = `<div class="no"><span class="spinner"></span></div>`
+    + `<div class="head"><span class="mv">${SIDE_CN[side]}思考中…</span><span class="meta">${esc(model)}${attempt ? ` · 第 ${attempt + 1} 次尝试` : ''} · 已想 <span class="lcount">0</span> 字</span></div>`
+    + `<div class="think">等待 DeepSeek 响应…</div><div class="reason live-answer"></div>`;
+  log.appendChild(div);
+  scrollLog(true);
+  let R = '', C = '', pending = false;
+  return {
+    update(r, c) {
+      R = r; C = c;
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => {
+        pending = false;
+        const t = div.querySelector('.think');
+        const stickBox = t.scrollHeight - t.scrollTop - t.clientHeight < 40;
+        t.textContent = R || (C ? '（这个模型没有思考过程）' : '等待 DeepSeek 响应…');
+        div.querySelector('.live-answer').textContent = C ? '回答：' + C : '';
+        div.querySelector('.lcount').textContent = R.length;
+        if (stickBox) t.scrollTop = t.scrollHeight;
+        scrollLog();
+      });
+    },
+  };
+}
+function removeLive() { const el = $('live'); if (el) el.remove(); $('jumpLatest').hidden = true; }
+
+// 读取服务端逐行 JSON 流，边读边刷新界面
+async function streamChat(body, live) {
+  liveCtl = new AbortController();
+  const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: liveCtl.signal });
+  if (!res.ok) {
+    let msg = 'HTTP ' + res.status, code;
+    try { const j = await res.json(); msg = j.error || msg; code = j.code; } catch {}
+    throw Object.assign(new Error(msg), { code });
+  }
+  const reader = res.body.getReader(), dec = new TextDecoder();
+  let buf = '', content = '', reasoning = '', done = false;
+  for (;;) {
+    const { value, done: end } = await reader.read();
+    if (end) break;
+    buf += dec.decode(value, { stream: true });
+    let i;
+    while ((i = buf.indexOf('\n')) >= 0) {
+      const line = buf.slice(0, i).trim();
+      buf = buf.slice(i + 1);
+      if (!line) continue;
+      const msg = JSON.parse(line);
+      if (msg.error) throw new Error(msg.error);
+      if (msg.r) reasoning += msg.r;
+      if (msg.c) content += msg.c;
+      if (msg.done) done = true;
+    }
+    live.update(reasoning, content);
+  }
+  if (!done) throw new Error('连接中断，回答不完整');
+  return { content, reasoning };
+}
+
+async function askModel(side, moves, myId) {
+  const model = $(side + 'Model').value.trim() || Models.DEFAULT_MODEL;
+  const temperature = parseFloat($(side + 'Temp').value);
+  const effort = $(side + 'Effort').value, shown = Models.display(model, effort);
+  const legal = new Map(moves.map(m => [X.toIccs(m), m]));
+  const messages = [{ role: 'system', content: SYSTEM }, { role: 'user', content: buildPrompt(side, moves) }];
+  const errors = [];
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (myId !== gameId) return null;
+    updateUI(`${SIDE_CN[side]}思考中${attempt ? `（第 ${attempt + 1} 次尝试）` : ''}`);
+    const body = Models.body(model, messages, { temperature, effort });
+    const live = createLive(side, shown, attempt);
+    let data;
+    try {
+      data = await streamChat(body, live);
+    } catch (e) {
+      if (e.name === 'AbortError' || myId !== gameId) return null;
+      errors.push(e.message);
+      if (Models.isAccountError(e) || /DEEPSEEK_API_KEY/.test(e.message)) throw e; // 余额不足、Key 无效：暂停对局，不随机走子
+      continue;
+    }
+    const content = data.content || '';
+    let mv = null, reason = '';
+    // 优先取回复里最后一个含 move 的 JSON 对象（思考模型可能在 JSON 前后夹带文字）
+    const objs = content.match(/\{[^{}]*"move"[^{}]*\}/g);
+    try {
+      const obj = JSON.parse(objs ? objs[objs.length - 1] : content.replace(/^```(?:json)?\s*|\s*```$/g, '').trim());
+      mv = String(obj.move || '').trim().toLowerCase();
+      reason = obj.reason || '';
+      if (!data.reasoning && obj.analysis) data.reasoning = String(obj.analysis);
+      if (obj.resign === true && game.history.length >= 10) { removeLive(); return { resign: true, reason, thinking: data.reasoning || '', model: shown }; }
+    } catch {
+      const hits = content.toLowerCase().match(/\b[a-i][0-9][a-i][0-9]\b/g);
+      if (hits) { mv = hits[hits.length - 1]; reason = content.slice(0, 200); }
+    }
+    if (mv && legal.has(mv)) { removeLive(); return { move: legal.get(mv), reason, thinking: data.reasoning || '', model: shown, attempts: attempt + 1 }; }
+    errors.push(mv ? `非法着法 ${mv}` : '无法解析回复');
+    messages.push({ role: 'assistant', content });
+    messages.push({ role: 'user', content: `${mv ? `"${mv}" 不在合法着法列表中` : '没能从你的回复中解析出着法'}。请只从列表中选一步，并只输出 JSON：{"analysis":"...","move":"...","reason":"..."}` });
+  }
+  removeLive();
+  return { move: moves[Math.floor(Math.random() * moves.length)], reason: '（AI 未给出可用着法，随机走子）' + errors.join('；'), model: shown, fallback: true };
+}
+
+// ---------- 对局流程 ----------
+async function step() {
+  if (busy || game.over) return;
+  if (isHuman(game.turn)) { updateUI(); return; } // 等玩家点棋盘
+  busy = true; thinkStart = Date.now(); updateUI('');
+  Models.maybeCheckBalance();
+  const myId = gameId, side = game.turn;
+  const moves = X.legalMoves(game.board, side);
+  let result;
+  try {
+    result = await askModel(side, moves, myId);
+  } catch (e) {
+    if (myId !== gameId) return;
+    removeLive();
+    running = false; busy = false;
+    logEntry('sys', '出错已暂停：' + esc(e.message || e) + (Models.isAccountError(e) ? '' : '（点「继续」重试）'));
+    if (Models.isAccountError(e)) Models.checkBalance();
+    updateUI();
+    return;
+  }
+  if (myId !== gameId || !result) return;
+  if (result.resign) { resign(side, { by: result.model, reason: result.reason, thinking: result.thinking }); return; } // 已重新开始
+  commitMove(side, result);
+}
+
+// 走子特效：将军、双将、吃子、绝杀、困毙
+function capVerb(p) {
+  const red = X.isRed(p);
+  return { R: '车吃', N: '马踏', C: '炮轰', P: red ? '兵吃' : '卒吃', K: red ? '帅吃' : '将吃', A: red ? '仕吃' : '士吃', B: red ? '相吃' : '象吃' }[p.toUpperCase()];
+}
+function moveEffects(b, m, piece, captured) {
+  const layer = $('fx'), wrap = document.querySelector('.board-wrap');
+  const oppRed = !X.isRed(piece), opp = oppRed ? 'red' : 'black';
+  const xPct = px(m[3]) / W * 100, yPct = py(m[2]) / H * 100;
+  const inCheck = X.isInCheck(b, oppRed);
+  const noMoves = !X.legalMoves(b, opp).length;
+  const capText = captured ? capVerb(piece) + X.NAMES[captured] : '';
+  setTimeout(() => {
+    if (noMoves) {
+      FX.flash(layer, 'rgba(255,214,110,.85)');
+      FX.shake(wrap, true);
+      FX.burst(layer, xPct, yPct, ['#ffd84a', '#ff9a3c', '#e0322a', '#fff'], 46);
+      FX.banner(layer, inCheck ? '绝杀' : '困毙', { kind: 'mate', sub: `${SIDE_CN[other(opp)]}胜${capText ? ' · ' + capText : ''}`, duration: 2200 });
+      FX.sound('mate');
+      return;
+    }
+    if (captured) FX.burst(layer, xPct, yPct, captured.toUpperCase() === 'R' ? ['#ffd84a', '#ff7b3a', '#e0322a', '#fff'] : undefined, captured.toUpperCase() === 'R' ? 34 : 22);
+    if (inCheck) {
+      const dbl = X.checkerCount(b, oppRed) >= 2;
+      FX.banner(layer, dbl ? '双将' : '将军', { kind: 'check', sub: capText });
+      FX.shake(wrap, dbl);
+      FX.sound('check');
+    } else if (captured) {
+      FX.banner(layer, capText, { kind: 'capture', sub: captured.toUpperCase() === 'R' ? '拿下大车！' : '' });
+      if (captured.toUpperCase() === 'R') FX.shake(wrap);
+      FX.sound('capture');
+    } else {
+      FX.sound('move');
+    }
+  }, ANIM_MS - 30);
+}
+
+function commitMove(side, result) {
+  const myId = gameId;
+  const m = result.move;
+  const piece = game.board[m[0]][m[1]];
+  const chinese = X.toChinese(game.board, m), iccs = X.toIccs(m);
+  const captured = X.applyMove(game.board, m);
+  if (captured) game.captured[side].push(captured);
+  game.history.push({ iccs, chinese });
+  game.lastMove = m;
+  game.turn = other(side);
+
+  const n = game.history.length;
+  const mrec = { side, iccs, chinese, captured: captured || null, reason: result.reason, thinking: result.thinking || '',
+                 model: result.model, attempts: result.attempts || null, fallback: !!result.fallback, at: new Date().toISOString(),
+                 seconds: result.model === '玩家' ? null : Math.round((Date.now() - thinkStart) / 1000) };
+  logEntry(side + (result.fallback ? ' sys' : ''), moveHtml(mrec, n));
+
+  // 终局判断
+  const key = X.boardKey(game.board, game.turn);
+  game.reps[key] = (game.reps[key] || 0) + 1;
+  if (!X.legalMoves(game.board, game.turn).length) {
+    game.over = `${SIDE_CN[game.turn]}${X.isInCheck(game.board, game.turn === 'red') ? '被将死' : '无子可走'}`;
+    game.winner = side;
+  } else if (game.reps[key] >= 3) {
+    game.over = '同一局面重复三次'; game.winner = 'draw';
+  } else if (n >= (parseInt($('maxPlies').value) || 300)) {
+    game.over = `达到 ${n} 步上限`; game.winner = 'draw';
+  }
+  if (game.over) {
+    running = false;
+    logEntry('sys over', (game.winner === 'draw' ? '和棋' : SIDE_CN[game.winner] + '胜') + '（' + esc(game.over) + '）');
+  }
+
+  // 保存对局记录
+  if (!game.record) {
+    game.record = {
+      type: 'xiangqi', id: newRecordId(), startedAt: new Date().toISOString(), redModel: isHuman('red') ? '玩家' : $('redModel').value.trim(), blackModel: isHuman('black') ? '玩家' : $('blackModel').value.trim(), result: null, moves: [],
+    };
+  }
+  game.record.moves.push(mrec);
+  game.record.result = game.over && (game.winner === 'draw' ? '和棋' : SIDE_CN[game.winner] + '胜') + '（' + game.over + '）';
+  game.record.updatedAt = new Date().toISOString();
+  saveRecord(game.record);
+
+  busy = false;
+  if (!replay) { animateMove(m, piece); moveEffects(game.board, m, piece, captured); }
+  updateUI();
+  // 玩家走完后 AI 自动应着；AI 之间对弈则按「继续/暂停」状态推进
+  if (!game.over && (running || isHuman(side))) {
+    const wasHuman = isHuman(side);
+    setTimeout(() => { if (myId === gameId && (running || wasHuman)) step(); }, wasHuman ? ANIM_MS : Math.max(ANIM_MS, parseInt($('delay').value) || 0));
+  }
+}
+
+canvas.addEventListener('click', e => {
+  if (replay || game.over || busy || !isHuman(game.turn)) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * W / rect.width, y = (e.clientY - rect.top) * H / rect.height;
+  let c = Math.round((x - PAD) / CELL), r = Math.round((y - PAD) / CELL);
+  if (c < 0 || c > 8 || r < 0 || r > 9) return;
+  if (flipped()) { c = 8 - c; r = 9 - r; }
+  if (selected) {
+    const m = selected.targets.find(t => t[2] === r && t[3] === c);
+    if (m) {
+      selected = null;
+      thinkStart = Date.now();
+      commitMove(game.turn, { move: m, reason: '', model: '玩家' });
+      return;
+    }
+  }
+  const p = game.board[r][c];
+  selected = p && X.isRed(p) === (game.turn === 'red') && !(selected && selected.r === r && selected.c === c)
+    ? { r, c, targets: X.legalMoves(game.board, game.turn).filter(t => t[0] === r && t[1] === c) }
+    : null;
+  render();
+});
+
+function newRecordId() {
+  const t = new Date(), pad = x => String(x).padStart(2, '0');
+  return `${t.getFullYear()}${pad(t.getMonth() + 1)}${pad(t.getDate())}-${pad(t.getHours())}${pad(t.getMinutes())}${pad(t.getSeconds())}`;
+}
+
+// 「AI / 我来下」切换
+function setPlayer(side, v) {
+  $(side + 'Player').value = v;
+  document.querySelectorAll(`.seg[data-for=${side}Player] button`).forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  $(side + 'Model').disabled = $(side + 'Effort').disabled = $(side + 'Temp').disabled = v === 'human';
+}
+document.querySelectorAll('.seg').forEach(seg => {
+  const side = seg.dataset.for.replace('Player', '');
+  seg.onclick = e => {
+    const v = e.target.dataset.v;
+    if (!v || $(seg.dataset.for).value === v) return;
+    setPlayer(side, v);
+    selected = null;
+    render(); updateUI();
+    if (!isHuman(game.turn) && running && !busy && !replay) step();
+  };
+});
+
+// 从记录的第 idx 步接着下。接在未下完对局的末尾时沿用原记录，否则另存为新的一局
+function resumeFrom(rec, idx) {
+  const moves = rec.moves.slice(0, idx);
+  const sameRecord = idx === rec.moves.length && !rec.result;
+  exitReplay();
+  newGame();
+  for (const side of ['red', 'black']) {
+    const who = side === 'red' ? rec.redModel : rec.blackModel;
+    setPlayer(side, who === '玩家' ? 'human' : 'ai');
+    if (who && who !== '玩家') setModel(side, who);
+  }
+  moves.forEach((m, i) => {
+    const mv = X.fromIccs(m.iccs);
+    const cap = X.applyMove(game.board, mv);
+    if (cap) game.captured[m.side].push(cap);
+    game.history.push({ iccs: m.iccs, chinese: m.chinese });
+    game.lastMove = mv;
+    game.turn = other(m.side);
+    const key = X.boardKey(game.board, game.turn);
+    game.reps[key] = (game.reps[key] || 0) + 1;
+    logEntry(m.side + (m.fallback ? ' sys' : ''), moveHtml(m, i + 1));
+  });
+  game.record = sameRecord ? rec : {
+    type: 'xiangqi', id: newRecordId(), startedAt: new Date().toISOString(), redModel: rec.redModel, blackModel: rec.blackModel,
+    result: null, moves, resumedFrom: { id: rec.id, ply: idx },
+  };
+  logEntry('sys', sameRecord ? `已接上 ${fmtTime(rec.startedAt)} 那局，从第 ${idx} 步之后继续`
+    : `从 ${fmtTime(rec.startedAt)} 那局的第 ${idx} 步分出新的一局（原记录不变）`);
+  if (!sameRecord) saveRecord(game.record);
+  running = true;
+  showTab('moves');
+  render(); updateUI();
+  step();
+}
+
+async function fetchRecord(id) {
+  const res = await fetch('/api/games/' + encodeURIComponent(id));
+  const rec = await res.json();
+  if (!res.ok) throw new Error(rec.error || res.status);
+  return rec;
+}
+// 模型下拉框；「其他模型…」可手动输入名字
+for (const side of ['red', 'black']) Models.wire(side, $, () => renderBars());
+const setModel = (side, name) => Models.set(side, $, name);
+Models.checkBalance();
+
+function moveHtml(m, n) {
+  const no = n % 2 === 1 ? `${(n + 1) / 2}.` : '';
+  const meta = [m.iccs];
+  if (m.captured) meta.push(`<span class="capt">吃${X.NAMES[m.captured]}</span>`);
+  if (m.model) meta.push(esc(m.model));
+  if (m.seconds) meta.push(m.seconds + ' 秒');
+  if (m.attempts > 1) meta.push(`第 ${m.attempts} 次才合法`);
+  return `<div class="no">${no}</div><div class="head"><span class="mv">${m.chinese}</span><span class="meta">${meta.join(' · ')}</span></div>`
+    + (m.reason ? `<div class="reason">${esc(m.reason)}</div>` : '')
+    + (m.thinking ? `<details><summary>思考过程（${m.thinking.length} 字）</summary><div class="think">${esc(m.thinking)}</div></details>` : '');
+}
+
+async function saveRecord(rec) {
+  try {
+    const res = await fetch('/api/games', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rec) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    loadGames();
+  } catch (e) {
+    logEntry('sys', '对局记录保存失败：' + esc(e.message));
+  }
+}
+
+const fmtTime = iso => iso ? new Date(iso).toLocaleString('zh-CN', { hour12: false, month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+async function loadGames() {
+  try {
+    const list = (await (await fetch('/api/games')).json()).filter(g => (g.type || 'xiangqi') === 'xiangqi');
+    $('games').innerHTML = list.length ? list.map(g => {
+      const live = game.record && game.record.id === g.id && !game.over;
+      const chip = g.result ? `<span class="result-chip done">${esc(g.result.replace(/（.*/, ''))}</span>`
+        : live ? '<span class="result-chip live">进行中</span>' : '<span class="result-chip">未下完</span>';
+      return `<div class="game-item"><div class="gi"><div class="gt">${fmtTime(g.startedAt)} · ${g.plies} 步</div>`
+        + `<div class="gm">红 ${esc(g.redModel || '?')}  vs  黑 ${esc(g.blackModel || '?')}</div></div>`
+        + chip + (!g.result && !live ? `<button class="btn small primary" data-resume="${esc(g.id)}">接着下</button>` : '')
+        + `<button class="btn small" data-game="${esc(g.id)}">复盘</button></div>`;
+    }).join('') : '<div class="empty">还没有对局记录</div>';
+  } catch (e) {
+    $('games').innerHTML = '<div class="empty">读取记录失败：' + esc(e.message) + '</div>';
+  }
+}
+
+// 认输：side 方认输，info = { by, reason, thinking }
+function resign(side, info = {}) {
+  if (game.over) return;
+  if (liveCtl) liveCtl.abort();
+  removeLive();
+  gameId++; // 作废还在进行的 AI 请求
+  game.over = `${SIDE_CN[side]}认输`; game.winner = other(side);
+  running = false; busy = false;
+  logEntry('sys over', `${SIDE_CN[game.winner]}胜（${SIDE_CN[side]}认输）${info.reason ? '：' + esc(info.reason) : ''}`
+    + (info.thinking ? `<details><summary>思考过程（${info.thinking.length} 字）</summary><div class="think">${esc(info.thinking)}</div></details>` : ''));
+  if (game.record) {
+    game.record.resign = { side, by: info.by || '玩家', reason: info.reason || '', at: new Date().toISOString() };
+    game.record.result = `${SIDE_CN[game.winner]}胜（${game.over}）`;
+    game.record.updatedAt = new Date().toISOString();
+    saveRecord(game.record);
+  }
+  FX.banner($('fx'), '认输', { kind: 'mate', sub: `${SIDE_CN[game.winner]}胜`, duration: 2200 });
+  FX.sound('mate');
+  render(); updateUI();
+}
+$('btnResign').onclick = () => {
+  const humans = Object.keys(SIDE_CN).filter(isHuman);
+  const side = humans.includes(game.turn) ? game.turn : humans[0];
+  if (!side || game.over) return;
+  if (confirm(`确定${SIDE_CN[side]}认输吗？`)) resign(side, { by: '玩家' });
+};
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + name));
+  if (name === 'moves') scrollLog();
+  else $('jumpLatest').hidden = true;
+}
+// 棋谱栏是否跟随到最新：用户往上翻时暂停跟随，回到底部或新一步开始思考时恢复
+var logFollow = true;
+function scrollLog(force) {
+  const pane = $('pane-moves');
+  if (force) logFollow = true;
+  if (logFollow && pane.clientHeight) pane.scrollTop = pane.scrollHeight;
+  $('jumpLatest').hidden = logFollow || !$('live');
+}
+$('pane-moves').addEventListener('scroll', () => {
+  const pane = $('pane-moves');
+  if (!pane.clientHeight) return; // 隐藏时的滚动不算
+  logFollow = pane.scrollHeight - pane.scrollTop - pane.clientHeight < 60;
+  $('jumpLatest').hidden = logFollow || !$('live');
+});
+
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => showTab(t.dataset.tab));
+
+async function openReplay(id) {
+  let rec;
+  try { rec = await fetchRecord(id); } catch (e) { alert('读取对局失败：' + e.message); return; }
+  running = false;
+  stopAutoplay();
+  replay = { rec, idx: 0, timer: null };
+  $('replayCard').hidden = false; $('log').hidden = true;
+  $('replayTitle').textContent = `复盘 · ${fmtTime(rec.startedAt)}`;
+  $('replaySub').textContent = `红 ${rec.redModel}  vs  黑 ${rec.blackModel} · ${rec.result || '未下完'}`;
+  $('replayList').innerHTML = rec.moves.map((m, i) =>
+    (i % 2 === 0 ? `<span class="n">${i / 2 + 1}.</span>` : '') + `<span class="mv ${m.side}" data-idx="${i + 1}">${m.chinese}</span>`).join('');
+  showTab('moves');
+  showReplay(0);
+  updateUI();
+}
+
+function showReplay(idx) {
+  const moves = replay.rec.moves;
+  const prev = replay.idx;
+  replay.idx = Math.max(0, Math.min(moves.length, idx));
+  if (replay.idx === prev + 1) {
+    const m = X.fromIccs(moves[prev].iccs);
+    const piece = replayBoard(prev)[m[0]][m[1]];
+    animateMove(m, piece);
+    moveEffects(replayBoard(replay.idx), m, piece, moves[prev].captured);
+  } else render();
+  renderBars();
+  document.querySelectorAll('#replayList .mv').forEach(el => el.classList.toggle('cur', +el.dataset.idx === replay.idx));
+  const cur = document.querySelector('#replayList .cur');
+  if (cur) cur.scrollIntoView({ block: 'nearest' });
+  const ended = replay.idx === moves.length && replay.rec.result;
+  $('btnResume').disabled = !!ended;
+  $('btnResume').title = ended ? '这局已经下完了，退回到前面某一步可以分出新的一局' : '';
+  $('replayProgress').style.width = (moves.length ? replay.idx / moves.length * 100 : 0) + '%';
+  $('replayMove').innerHTML = replay.idx
+    ? `<div class="entry ${moves[replay.idx - 1].side}">${moveHtml(moves[replay.idx - 1], replay.idx)}</div>`
+    : `<div class="empty" style="padding:16px">开局局面，共 ${moves.length} 步</div>`;
+}
+
+function stopAutoplay() {
+  if (replay && replay.timer) { clearInterval(replay.timer); replay.timer = null; }
+  $('btnAutoplay').textContent = '自动播放';
+}
+
+function exitReplay() {
+  if (!replay) return;
+  stopAutoplay();
+  replay = null;
+  $('replayCard').hidden = true; $('log').hidden = false;
+  render(); updateUI();
+}
+
+$('games').onclick = async e => {
+  const d = e.target.dataset || {};
+  if (d.game) openReplay(d.game);
+  if (d.resume) {
+    try { const rec = await fetchRecord(d.resume); resumeFrom(rec, rec.moves.length); }
+    catch (err) { alert('读取对局失败：' + err.message); }
+  }
+};
+$('btnResume').onclick = () => resumeFrom(replay.rec, replay.idx);
+$('btnGames').onclick = loadGames;
+$('replayList').onclick = e => { if (e.target.dataset.idx) { stopAutoplay(); showReplay(+e.target.dataset.idx); } };
+document.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => {
+  stopAutoplay();
+  const n = replay.rec.moves.length;
+  showReplay({ first: 0, prev: replay.idx - 1, next: replay.idx + 1, last: n }[b.dataset.nav]);
+});
+$('btnAutoplay').onclick = () => {
+  if (replay.timer) return stopAutoplay();
+  if (replay.idx >= replay.rec.moves.length) showReplay(0);
+  $('btnAutoplay').textContent = '停止播放';
+  replay.timer = setInterval(() => {
+    showReplay(replay.idx + 1);
+    if (replay.idx >= replay.rec.moves.length) stopAutoplay();
+  }, 1200);
+};
+$('btnExitReplay').onclick = exitReplay;
+document.addEventListener('keydown', e => {
+  if (!replay || e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowLeft') { stopAutoplay(); showReplay(replay.idx - 1); }
+  if (e.key === 'ArrowRight') { stopAutoplay(); showReplay(replay.idx + 1); }
+});
+
+$('btnRun').onclick = () => {
+  exitReplay();
+  running = !running;
+  updateUI();
+  if (running && !busy) step();
+};
+$('btnStep').onclick = () => { exitReplay(); step(); };
+function startNewMatch() {
+  exitReplay();
+  newGame();
+  running = true;
+  showTab('moves');
+  updateUI();
+  step();
+}
+$('btnNew').onclick = startNewMatch;
+
+FX.muteButton($('btnMute'));
+newGame();
+loadGames();
+if (document.fonts) document.fonts.ready.then(() => { bgCache = null; render(); });
+if (new URLSearchParams(location.search).has('auto')) startNewMatch();
+</script>
+</body>
+</html>
