@@ -4,7 +4,9 @@ icon: fas fa-gamepad
 order: 5
 ---
 
-Small browser games from my Game Arcade collection.
+Little games I vibe-coded for fun. When you're vibe coding and waiting on the AI, take a break and play a round.
+
+vibe coding 等 AI 写代码的时候，无聊了就来玩一局吧。
 
 ## 🏃 极速跑酷 3D
 
