@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>地铁跑酷 3D · DeepSeek 游戏合集</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<style>
+  body.sub-page { background:linear-gradient(180deg, #2f8cff 0%, #79c6ff 45%, #ffe9b0 100%); background-attachment:fixed; color:#1b2340; }
+  body.sub-page { --top-ink:#fff; --top-muted:#eaf6ff; --top-btn:rgba(255,255,255,.22); --top-btn-line:rgba(255,255,255,.5); --top-btn-hover:#ffe066; }
+  body.sub-page .page-title h1 { text-shadow:0 2px 0 rgba(0,0,0,.18); }
+  .sub-main { max-width:1280px; margin:0 auto; padding:6px 20px 28px; }
+  .stage { position:relative; width:100%; max-width:min(1280px, calc((100vh - 140px) * 16 / 9)); margin:0 auto; aspect-ratio:16 / 9;
+           border-radius:18px; overflow:hidden; background:#7cc4ff; touch-action:none; user-select:none; -webkit-user-select:none;
+           box-shadow:0 0 0 4px #fff, 0 0 0 9px #ffb400, 0 24px 60px rgba(20,40,90,.45); }
+  .stage canvas { position:absolute; inset:0; width:100% !important; height:100% !important; display:block; }
+  .layer { position:absolute; inset:0; pointer-events:none; }
+  #flash { opacity:0; background:#fff; }
+  .hud { position:absolute; inset:0; pointer-events:none; font-family:"Arial Rounded MT Bold", "PingFang SC", -apple-system, sans-serif; color:#fff; }
+  .hud[hidden] { display:none; }
+  .chip { display:inline-flex; align-items:center; gap:8px; padding:6px 14px 6px 8px; border-radius:99px; background:rgba(10,30,70,.55);
+          font:900 clamp(15px, 2.2vw, 28px)/1 "Arial Rounded MT Bold", -apple-system, sans-serif; font-variant-numeric:tabular-nums;
+          text-shadow:0 2px 0 rgba(0,0,0,.35); box-shadow:inset 0 0 0 2px rgba(255,255,255,.25); }
+  .h-tl { position:absolute; left:2%; top:3%; display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+  .h-tr { position:absolute; right:2%; top:3%; display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+  .coin-ic { width:1.1em; height:1.1em; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff6b0, #ffcf33 45%, #c98a00); box-shadow:0 0 0 2px #a86c00; }
+  .mult { background:linear-gradient(180deg, #ffd23a, #ff9800); color:#5a2a00; text-shadow:none; padding:6px 12px; box-shadow:0 3px 0 #b55d00; }
+  .mult.hot { background:linear-gradient(180deg, #7dff6a, #19c24a); color:#063b14; box-shadow:0 3px 0 #0b7a2c; }
+  .powers { display:flex; gap:8px; }
+  .pw { position:relative; width:clamp(36px, 4.4vw, 54px); height:clamp(36px, 4.4vw, 54px); border-radius:50%; display:grid; place-items:center;
+        background:rgba(10,30,70,.55); font-size:clamp(17px, 2.2vw, 27px); }
+  .pw svg { position:absolute; inset:0; transform:rotate(-90deg); }
+  .pw circle { fill:none; stroke-width:4; }
+  .boards { position:absolute; left:2%; bottom:4%; font-size:clamp(12px, 1.4vw, 16px); }
+  .boards kbd { background:#fff; color:#1b2340; border-radius:6px; padding:1px 6px; font:800 .85em -apple-system, sans-serif; margin-left:4px; }
+  .chase { position:absolute; left:50%; bottom:5%; transform:translateX(-50%); padding:6px 16px; border-radius:99px; background:#e53935;
+           font:900 clamp(12px, 1.5vw, 17px) -apple-system, sans-serif; box-shadow:0 3px 0 #8e1c1a; animation:blink .4s steps(2) infinite; }
+  .chase[hidden] { display:none; }
+  @keyframes blink { 50% { opacity:.55; } }
+  .pop { position:absolute; transform:translate(-50%, -50%); white-space:nowrap; font:900 clamp(16px, 2.4vw, 30px) "Arial Rounded MT Bold", -apple-system, sans-serif;
+         -webkit-text-stroke:1.5px rgba(0,0,0,.35); text-shadow:0 3px 0 rgba(0,0,0,.25); animation:pop 1.1s ease-out forwards; }
+  @keyframes pop { 0% { transform:translate(-50%, -50%) scale(1.8); opacity:0; } 15% { transform:translate(-50%, -50%) scale(1); opacity:1; } 70% { opacity:1; } 100% { transform:translate(-50%, -170%); opacity:0; } }
+  .big-pop { position:absolute; left:50%; top:30%; transform:translate(-50%, -50%); white-space:nowrap; pointer-events:none; text-align:center;
+             font:900 clamp(34px, 6.5vw, 80px)/1 "Arial Rounded MT Bold", -apple-system, sans-serif; color:#fff;
+             -webkit-text-stroke:3px #1b2340; text-shadow:0 6px 0 #1b2340; animation:bigpop 1.6s cubic-bezier(.2,1.4,.4,1) forwards; }
+  .big-pop small { display:block; margin-top:10px; font-size:.32em; -webkit-text-stroke:0; text-shadow:0 2px 0 rgba(0,0,0,.4); }
+  @keyframes bigpop { 0% { transform:translate(-50%, -50%) scale(.2); opacity:0; } 18% { transform:translate(-50%, -50%) scale(1.08); opacity:1; } 30% { transform:translate(-50%, -50%) scale(1); } 80% { opacity:1; } 100% { transform:translate(-50%, -80%) scale(1); opacity:0; } }
+
+  .overlay { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center;
+             background:radial-gradient(ellipse at 50% 40%, rgba(20,60,140,.35), rgba(10,25,60,.78)); color:#fff; padding:20px; }
+  .overlay[hidden] { display:none; }
+  .overlay.menu { background:linear-gradient(90deg, rgba(10,25,60,.85) 0%, rgba(10,25,60,.55) 45%, transparent 75%); align-items:flex-start; padding-left:5%; }
+  .title { font:900 clamp(38px, 7vw, 86px)/1 "Arial Rounded MT Bold", -apple-system, sans-serif; letter-spacing:2px; color:#ffd23a;
+           -webkit-text-stroke:3px #1b2340; text-shadow:0 7px 0 #1b2340, 0 0 30px rgba(255,210,58,.5); transform:rotate(-3deg); }
+  .title span { color:#4fc3ff; }
+  .ov-sub { font-size:14px; opacity:.92; }
+  .heroes { display:flex; gap:10px; flex-wrap:wrap; }
+  .hero-card { width:clamp(110px, 13vw, 150px); padding:10px; border-radius:14px; cursor:pointer; text-align:left; color:#fff;
+               background:rgba(255,255,255,.1); border:2px solid rgba(255,255,255,.25); font:inherit; transition:transform .12s; }
+  .hero-card:hover { transform:translateY(-3px); }
+  .hero-card.on { border-color:#ffd23a; background:rgba(255,210,58,.18); box-shadow:0 0 0 3px rgba(255,210,58,.3); }
+  .hero-card b { display:block; font-size:15px; margin-bottom:4px; }
+  .hero-card small { font-size:11px; opacity:.85; line-height:1.4; display:block; }
+  .hero-card i { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
+  .keys { display:grid; grid-template-columns:auto auto; gap:6px 18px; font-size:13px; text-align:left; opacity:.95; }
+  .keys kbd { display:inline-block; min-width:22px; text-align:center; background:#fff; color:#1b2340; border-radius:6px; padding:1px 6px;
+              font:800 12px -apple-system, sans-serif; box-shadow:0 2px 0 #9aa7c7; margin-right:4px; }
+  .btns { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .overlay.menu .btns { justify-content:flex-start; }
+  .go { border:0; border-radius:16px; padding:14px 34px; cursor:pointer; text-decoration:none; display:inline-block;
+        font:900 clamp(18px, 2.2vw, 26px) "Arial Rounded MT Bold", -apple-system, sans-serif; letter-spacing:2px; color:#1b2340;
+        background:linear-gradient(180deg, #ffe066, #ffb400); box-shadow:0 6px 0 #b86e00, 0 10px 20px rgba(0,0,0,.25); }
+  .go:active { transform:translateY(4px); box-shadow:0 2px 0 #b86e00; }
+  .go.blue { color:#fff; background:linear-gradient(180deg, #5ccbff, #1e88e5); box-shadow:0 6px 0 #0d4f99, 0 10px 20px rgba(0,0,0,.25); }
+  .go.ghost { color:#fff; background:rgba(255,255,255,.14); box-shadow:inset 0 0 0 2px rgba(255,255,255,.4); }
+  .score-big { font:900 clamp(44px, 8vw, 92px)/1 "Arial Rounded MT Bold", -apple-system, sans-serif; color:#fff; -webkit-text-stroke:3px #1b2340;
+               text-shadow:0 6px 0 #1b2340; font-variant-numeric:tabular-nums; }
+  .stats { display:flex; gap:24px; font-size:13px; flex-wrap:wrap; justify-content:center; }
+  .stats b { display:block; font-size:22px; }
+  .newrec { color:#7dff6a; font-weight:900; letter-spacing:3px; animation:pulse 1s infinite; }
+  @keyframes pulse { 50% { transform:scale(1.1); } }
+  .loadbar { width:min(60%, 360px); height:10px; border-radius:99px; background:rgba(255,255,255,.2); overflow:hidden; }
+  .loadbar b { display:block; height:100%; width:0; background:linear-gradient(90deg, #ffe066, #ffb400); transition:width .2s; }
+  .bar-below { display:flex; align-items:center; gap:10px; margin:14px auto 0; max-width:min(1280px, calc((100vh - 140px) * 16 / 9)); }
+  .bar-below .note { flex:1; color:#24406e; font-size:12px; }
+  .touch-pad { display:none; gap:10px; margin-top:12px; }
+  .touch-pad button { flex:1; padding:16px 0; font-size:20px; font-weight:900; border-radius:14px; border:0; color:#1b2340; background:#fff; box-shadow:0 4px 0 #9aa7c7; }
+  @media (pointer:coarse) { .touch-pad { display:flex; } }
+  @media (max-width:760px) { .overlay.menu { background:rgba(10,25,60,.82); padding:14px; align-items:center; } .overlay.menu .btns { justify-content:center; } .keys { display:none; } }
+</style>
+</head>
+<body class="sub-page">
+<header class="topbar">
+  <a class="brand" href="/games/" title="返回游戏大厅"><span class="seal">弈</span><span class="brand-name">游戏合集</span></a>
+  <span class="crumb-sep">/</span>
+  <div class="page-title"><h1>地铁跑酷 3D</h1><div class="sub">三条轨道 · 躲火车 · 跳上车顶 · 甩开巡警</div></div>
+  <a class="home-btn" href="/games/">← 返回大厅</a>
+</header>
+
+<div class="sub-main">
+  <div class="stage" id="stage">
+    <div class="layer" id="flash"></div>
+    <div class="layer" id="pops"></div>
+
+    <div class="hud" id="hud" hidden>
+      <div class="h-tl">
+        <div class="chip"><i class="coin-ic"></i><span id="hCoins">0</span></div>
+        <div class="powers" id="hPowers"></div>
+      </div>
+      <div class="h-tr">
+        <div class="chip" id="hScore">0</div>
+        <div class="chip mult" id="hMult">×1</div>
+      </div>
+      <div class="boards chip" id="hBoards">🛹 ×3<kbd>E</kbd></div>
+      <div class="chase" id="hChase" hidden>⚠ 巡警追上来了！再撞一次就被抓</div>
+    </div>
+
+    <div class="overlay" id="loadOv">
+      <div class="title">地铁<span>跑酷</span></div>
+      <div class="ov-sub" id="loadTxt">正在载入模型…</div>
+      <div class="loadbar"><b id="loadBar"></b></div>
+    </div>
+
+    <div class="overlay menu" id="menuOv" hidden>
+      <div class="title">地铁<span>跑酷</span></div>
+      <div class="ov-sub">选一个角色，在三条轨道上一路狂奔</div>
+      <div class="heroes" id="heroCards"></div>
+      <div class="keys">
+        <span><kbd>←</kbd><kbd>→</kbd> 换轨道</span><span><kbd>↑</kbd><kbd>空格</kbd> 跳</span>
+        <span><kbd>↓</kbd> 翻滚 / 空中急降</span><span><kbd>E</kbd> 滑板（撞一次不死）</span>
+        <span>🧲 磁铁 · 👟 超级跳鞋</span><span>🚀 喷气背包 · ✖2 双倍</span>
+      </div>
+      <div class="btns">
+        <button class="go" id="btnStart">开 跑！</button>
+        <a class="go ghost" href="/games/">返回大厅</a>
+      </div>
+      <div class="ov-sub" id="bestLine"></div>
+    </div>
+
+    <div class="overlay" id="pauseOv" hidden>
+      <div class="title">暂停</div>
+      <div class="btns">
+        <button class="go" id="btnResume">继 续</button>
+        <button class="go ghost" id="btnQuit">回到菜单</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="overOv" hidden>
+      <div class="ov-sub" id="overReason"></div>
+      <div class="score-big" id="overScore">0</div>
+      <div class="newrec" id="overNew" hidden>★ 新纪录 ★</div>
+      <div class="stats">
+        <div>距离<b id="overDist">0 米</b></div>
+        <div>金币<b id="overCoins">0</b></div>
+        <div>道具<b id="overPowers">0</b></div>
+        <div>最高分<b id="overBest">0</b></div>
+      </div>
+      <div class="btns">
+        <button class="go" id="btnRestart">再来一局</button>
+        <button class="go blue" id="btnMenu">换角色</button>
+        <a class="go ghost" href="/games/">返回大厅</a>
+      </div>
+    </div>
+  </div>
+  <div class="bar-below">
+    <span class="note">手机上：左右滑换轨道，上滑跳，下滑翻滚，双击用滑板。模型：Quaternius、Kenney（CC0）。</span>
+    <button class="btn small mute-btn" id="btnMute"></button>
+  </div>
+  <div class="touch-pad">
+    <button id="padL">←</button><button id="padJ">↑</button><button id="padD">↓</button><button id="padR">→</button>
+  </div>
+</div>
+
+<script src="fx.js"></script>
+<script type="module" src="subway.js"></script>
+</body>
+</html>

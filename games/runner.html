@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>极速跑酷 3D · DeepSeek 游戏合集</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<style>
+  body.run-page { background:radial-gradient(1200px 700px at 50% -10%, #3a1466 0%, transparent 60%), linear-gradient(180deg, #120624, #07020f); color:#eee; }
+  body.run-page { --top-ink:#fff; --top-muted:#b9a8d8; --top-btn:rgba(255,255,255,.08); --top-btn-line:rgba(255,255,255,.18); --top-btn-hover:#33f0ff; }
+  .run-main { max-width:1280px; margin:0 auto; padding:6px 20px 28px; }
+  .run-stage { position:relative; width:100%; max-width:min(1280px, calc((100vh - 140px) * 16 / 9)); margin:0 auto; aspect-ratio:16 / 9;
+               border-radius:16px; overflow:hidden; background:#05020c; touch-action:none; user-select:none; -webkit-user-select:none;
+               box-shadow:0 0 0 1px rgba(51,240,255,.25), 0 0 40px rgba(255,43,214,.25), 0 24px 60px rgba(0,0,0,.6); }
+  .run-stage canvas { position:absolute; inset:0; width:100% !important; height:100% !important; display:block; }
+  .layer { position:absolute; inset:0; pointer-events:none; }
+  .vignette { background:radial-gradient(ellipse at 50% 55%, transparent 55%, rgba(0,0,0,.55) 100%); }
+  #flash { opacity:0; }
+
+  /* HUD */
+  .hud { position:absolute; inset:0; pointer-events:none; font-family:-apple-system, "PingFang SC", sans-serif; color:#fff; }
+  .hud[hidden] { display:none; }
+  .hud-score { position:absolute; left:2.2%; top:3%; font:900 clamp(22px, 3.4vw, 44px)/1 -apple-system, sans-serif; letter-spacing:1px;
+               text-shadow:0 0 14px var(--acc, #33f0ff), 0 2px 0 rgba(0,0,0,.5); font-variant-numeric:tabular-nums; transition:transform .1s; }
+  .hud-coins { position:absolute; left:2.2%; top:12%; display:flex; align-items:center; gap:8px; font:800 clamp(13px, 1.7vw, 20px) -apple-system, sans-serif; color:#ffd36b; text-shadow:0 0 10px #ffb000; }
+  .hud-coins i { width:1.1em; height:1.1em; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff6b0, #ffcf33 45%, #b97800); box-shadow:0 0 10px #ffb000; display:inline-block; }
+  .hud-coins span.meta { color:rgba(255,255,255,.85); font-weight:700; text-shadow:0 0 8px var(--acc, #33f0ff); margin-left:10px; font-size:.82em; }
+  .hud-bonus { position:absolute; left:2.2%; top:18.5%; display:flex; align-items:center; gap:8px; font:700 clamp(10px, 1.1vw, 13px) -apple-system, sans-serif; color:#ffe45c; }
+  .bar { width:clamp(80px, 12vw, 150px); height:8px; border-radius:99px; background:rgba(0,0,0,.5); box-shadow:inset 0 0 0 1px rgba(255,255,255,.15); overflow:hidden; }
+  .bar > b { display:block; height:100%; width:0; border-radius:99px; background:#ffe45c; box-shadow:0 0 10px #ffe45c; transition:width .15s; }
+  .hud-fever { position:absolute; left:50%; top:3.2%; transform:translateX(-50%); text-align:center; font:800 clamp(10px, 1.1vw, 13px) -apple-system, sans-serif; }
+  .hud-fever .bar { width:clamp(160px, 26vw, 320px); height:11px; margin-bottom:4px; }
+  .hud-fever .bar > b { background:var(--acc, #33f0ff); box-shadow:0 0 12px var(--acc, #33f0ff); }
+  .hud-fever.hot .bar > b { background:linear-gradient(90deg, #ff3b5c, #ffe45c, #3ee06b, #3ea0ff, #c46bff); animation:hue 1s linear infinite; }
+  @keyframes hue { to { filter:hue-rotate(360deg); } }
+  .hud-combo { margin-top:6px; font:900 clamp(16px, 2.3vw, 28px) -apple-system, sans-serif; color:#ffd36b; text-shadow:0 0 14px #ffb000; min-height:1.2em; }
+  .hud-powers { position:absolute; right:2%; top:3%; display:flex; gap:10px; }
+  .pw { position:relative; width:clamp(34px, 4.4vw, 52px); height:clamp(34px, 4.4vw, 52px); border-radius:50%; display:grid; place-items:center;
+        background:rgba(0,0,0,.45); font-size:clamp(16px, 2.2vw, 26px); }
+  .pw svg { position:absolute; inset:0; transform:rotate(-90deg); }
+  .pw circle { fill:none; stroke-width:4; }
+  .warn { position:absolute; right:1.6%; width:clamp(34px, 3.6vw, 46px); height:clamp(34px, 3.6vw, 46px); display:grid; place-items:center;
+          font:900 clamp(12px, 1.3vw, 15px) -apple-system, sans-serif; color:#000; animation:blink .25s steps(2) infinite; }
+  .warn.up { top:62%; background:#ffcc00; clip-path:polygon(50% 0, 100% 100%, 0 100%); padding-top:10px; }
+  .warn.down { top:38%; background:#ff2a6a; clip-path:polygon(0 0, 100% 0, 50% 100%); padding-bottom:10px; }
+  .warn[hidden] { display:none; }
+  @keyframes blink { 50% { opacity:.45; } }
+  .pop { position:absolute; transform:translate(-50%, -50%); white-space:nowrap; font:900 clamp(14px, 2vw, 26px) "PingFang SC", -apple-system, sans-serif;
+         text-shadow:0 0 12px currentColor, 0 2px 0 rgba(0,0,0,.6); animation:pop 1.1s ease-out forwards; }
+  @keyframes pop { 0% { transform:translate(-50%, -50%) scale(1.8); opacity:0; } 15% { transform:translate(-50%, -50%) scale(1); opacity:1; } 70% { opacity:1; } 100% { transform:translate(-50%, -160%) scale(1); opacity:0; } }
+  .rb-banner { position:absolute; left:50%; top:32%; transform:translate(-50%, -50%); text-align:center; pointer-events:none; white-space:nowrap; animation:ban 1.9s cubic-bezier(.2,.9,.3,1.2) forwards; }
+  .rb-banner .t { font:900 clamp(40px, 8vw, 96px)/1 "Kaiti SC", STKaiti, KaiTi, serif; letter-spacing:10px; -webkit-text-stroke:2px rgba(255,255,255,.9); paint-order:stroke fill; }
+  .rb-banner .s { margin-top:10px; font:800 clamp(13px, 1.8vw, 20px) -apple-system, "PingFang SC", sans-serif; color:#fff; letter-spacing:2px; text-shadow:0 2px 8px rgba(0,0,0,.7); }
+  @keyframes ban { 0% { transform:translate(-50%, -50%) scale(2.6); opacity:0; filter:blur(8px); } 14% { transform:translate(-50%, -50%) scale(.94); opacity:1; filter:none; }
+    24% { transform:translate(-50%, -50%) scale(1.03); } 80% { transform:translate(-50%, -50%) scale(1); opacity:1; } 100% { transform:translate(-50%, -58%) scale(1.06); opacity:0; } }
+  .count { position:absolute; left:50%; top:42%; transform:translate(-50%, -50%); font:900 clamp(70px, 14vw, 170px)/1 -apple-system, sans-serif; color:#33f0ff;
+           -webkit-text-stroke:3px #fff; text-shadow:0 0 40px #ff2bd6; animation:cnt 1s ease-out forwards; }
+  @keyframes cnt { from { transform:translate(-50%, -50%) scale(2.2); opacity:1; } to { transform:translate(-50%, -50%) scale(1); opacity:.15; } }
+
+  /* 面板 */
+  .overlay { position:absolute; inset:0; display:flex; color:#fff; }
+  .overlay[hidden] { display:none; }
+  .center { flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center; background:radial-gradient(circle at 50% 45%, rgba(30,8,60,.55), rgba(5,2,15,.88)); padding:18px; overflow:auto; }
+  .menu { justify-content:flex-end; background:linear-gradient(90deg, transparent 38%, rgba(6,2,18,.75) 56%, rgba(6,2,18,.92)); }
+  .menu-panel { width:min(54%, 560px); max-height:100%; padding:2% 2.6%; display:flex; flex-direction:column; justify-content:center; gap:min(1.2vh, 10px); overflow:auto; }
+  .ov-title { font:900 clamp(26px, 4.2vw, 64px)/1 "Kaiti SC", STKaiti, KaiTi, serif; letter-spacing:8px;
+              background:linear-gradient(180deg, #fff, #33f0ff 45%, #ff2bd6); -webkit-background-clip:text; background-clip:text; color:transparent;
+              filter:drop-shadow(0 0 12px rgba(51,240,255,.7)) drop-shadow(0 0 30px rgba(255,43,214,.6)); }
+  .ov-sub { font-size:clamp(11px, 1.3vw, 14px); opacity:.8; line-height:1.6; }
+  .menu-panel .ov-title { font-size:clamp(22px, 3.4vw, 52px); }
+  .lo-label { font:800 clamp(11px, 1.1vw, 13px) -apple-system, sans-serif; color:#b9a8d8; letter-spacing:2px; margin-top:.4vh; }
+  .lo-cards { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+  .lo-card { padding:6px 9px; border-radius:12px; cursor:pointer; text-align:left; color:#fff; font:inherit; background:rgba(255,255,255,.06);
+             border:1.5px solid rgba(255,255,255,.12); transition:border-color .15s, background .15s, transform .1s; }
+  .lo-card:hover { background:rgba(255,255,255,.1); transform:translateY(-1px); }
+  .lo-card.on { border-color:var(--c, #33f0ff); background:color-mix(in srgb, var(--c, #33f0ff) 16%, transparent); box-shadow:0 0 18px color-mix(in srgb, var(--c, #33f0ff) 50%, transparent); }
+  .lo-card .nm { font-weight:900; font-size:clamp(12px, 1.25vw, 15px); display:flex; align-items:center; gap:6px; }
+  .lo-card .nm i { width:10px; height:10px; border-radius:50%; background:var(--c); box-shadow:0 0 8px var(--c); }
+  .lo-card .ds { font-size:clamp(9px, .95vw, 11px); opacity:.65; margin-top:3px; }
+  .ov-keys { display:flex; gap:6px; flex-wrap:wrap; font-size:clamp(10px, 1vw, 12px); }
+  .ov-keys span { background:rgba(255,255,255,.08); border:1px solid rgba(51,240,255,.3); border-radius:8px; padding:3px 8px; }
+  .ov-keys kbd { font-family:inherit; font-weight:800; color:#33f0ff; }
+  .ov-btns { display:flex; gap:10px; flex-wrap:wrap; }
+  .center .ov-btns { justify-content:center; }
+  .go-btn { font:800 clamp(14px, 1.6vw, 18px) -apple-system, sans-serif; color:#12021f; padding:11px 30px; border:0; border-radius:99px; cursor:pointer; text-decoration:none;
+            background:linear-gradient(90deg, #33f0ff, #ff2bd6); box-shadow:0 0 22px rgba(255,43,214,.6), 0 6px 0 #5a0f6e; }
+  .go-btn:active { transform:translateY(3px); box-shadow:0 0 22px rgba(255,43,214,.6), 0 3px 0 #5a0f6e; }
+  .go-btn.ghost { background:rgba(255,255,255,.1); color:#fff; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35); }
+  .go-btn:disabled { opacity:.4; cursor:default; }
+  .ov-grade { font:900 clamp(70px, 14vw, 150px)/1 -apple-system, sans-serif; animation:grade-in .7s cubic-bezier(.2,1.6,.4,1) both; }
+  @keyframes grade-in { from { transform:scale(3) rotate(-20deg); opacity:0; } }
+  .ov-score { font:900 clamp(34px, 6vw, 64px)/1 -apple-system, sans-serif; color:#fff; text-shadow:0 0 18px rgba(51,240,255,.8); font-variant-numeric:tabular-nums; }
+  .ov-stats { display:flex; gap:22px; font-size:13px; opacity:.9; flex-wrap:wrap; justify-content:center; }
+  .ov-stats b { display:block; font-size:21px; color:#fff; }
+  .ov-new { color:#b2ff59; font-weight:900; letter-spacing:3px; text-shadow:0 0 12px #b2ff59; animation:pulse 1s infinite; }
+  @keyframes pulse { 50% { transform:scale(1.1); } }
+  .loadbar { width:min(60%, 360px); height:6px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; }
+  .loadbar b { display:block; height:100%; width:0; background:linear-gradient(90deg, #33f0ff, #ff2bd6); transition:width .2s; }
+  .touch-pad { display:none; gap:12px; margin-top:12px; }
+  .touch-pad button { flex:1; padding:18px; font-size:18px; font-weight:800; border-radius:14px; border:1px solid rgba(51,240,255,.4); color:#fff; background:rgba(51,240,255,.12); }
+  @media (pointer:coarse) { .touch-pad { display:flex; } }
+  @media (max-width:760px) { .menu-panel { width:100%; } .menu { background:rgba(6,2,18,.8); } }
+  .run-bar { display:flex; align-items:center; gap:10px; margin:10px auto 0; max-width:min(1280px, calc((100vh - 140px) * 16 / 9)); }
+  .run-bar .note { flex:1; color:#9c8cbd; font-size:12px; }
+  .run-bar .note a { color:#b9a8d8; }
+  .run-bar .btn { background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.18); color:#fff; }
+</style>
+</head>
+<body class="run-page">
+<header class="topbar">
+  <a class="brand" href="/games/" title="返回游戏大厅"><span class="seal">弈</span><span class="brand-name">游戏合集</span></a>
+  <span class="crumb-sep">/</span>
+  <div class="page-title"><h1>极速跑酷 3D</h1><div class="sub">香港 · 新加坡 · 台北 · 上海 · 东京 · 迪拜 · 熔岩峡谷 · 极光冰原</div></div>
+  <a class="home-btn" href="/games/">← 返回大厅</a>
+</header>
+
+<div class="run-main">
+  <div class="run-stage" id="stage">
+    <div class="layer vignette"></div>
+    <div class="layer" id="flash"></div>
+    <div class="layer" id="pops"></div>
+
+    <div class="hud" id="hud" hidden>
+      <div class="hud-score" id="hScore">0</div>
+      <div class="hud-coins"><i></i><b id="hCoins">0</b><span class="meta" id="hMeta"></span></div>
+      <div class="hud-bonus" id="hBonusRow">超级奖励 <div class="bar"><b id="hBonus"></b></div><span id="hBonusTxt"></span></div>
+      <div class="hud-fever" id="hFever"><div class="bar"><b id="hFeverBar"></b></div><div id="hFeverTxt">狂热</div><div class="hud-combo" id="hCombo"></div></div>
+      <div class="hud-powers" id="hPowers"></div>
+      <div class="warn up" id="warnUp" hidden>跳</div>
+      <div class="warn down" id="warnDown" hidden>滑</div>
+    </div>
+
+    <div class="overlay center" id="loadOv">
+      <div class="ov-title">极速跑酷 3D</div>
+      <div class="ov-sub" id="loadTxt">正在载入模型…</div>
+      <div class="loadbar"><b id="loadBar"></b></div>
+    </div>
+
+    <div class="overlay menu" id="menuOv" hidden>
+      <div class="menu-panel">
+        <div class="ov-title">极速跑酷</div>
+        <div class="lo-label">英 雄</div><div class="lo-cards" id="loHero"></div>
+        <div class="lo-label">宠 物</div><div class="lo-cards" id="loPet"></div>
+        <div class="lo-label">坐 骑</div><div class="lo-cards" id="loMount"></div>
+        <div class="ov-keys">
+          <span><kbd>空格/↑</kbd> 跳（再按＝空翻）</span><span><kbd>↓</kbd> 滑铲</span><span><kbd>P</kbd> 暂停</span>
+          <span>攒满金币进 <b style="color:#ffe45c">超级奖励</b></span>
+        </div>
+        <div class="ov-btns">
+          <button class="go-btn" id="btnStart">开 跑！</button>
+          <a class="go-btn ghost" href="/games/">返回大厅</a>
+        </div>
+        <div class="ov-sub" id="bestLine"></div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="pauseOv" hidden>
+      <div class="ov-title">暂停</div>
+      <div class="ov-btns">
+        <button class="go-btn" id="btnResume">继 续</button>
+        <button class="go-btn ghost" id="btnQuit">重新开始</button>
+        <a class="go-btn ghost" href="/games/">返回大厅</a>
+      </div>
+    </div>
+
+    <div class="overlay center" id="overOv" hidden>
+      <div class="ov-sub" id="overReason"></div>
+      <div class="ov-grade" id="overGrade">A</div>
+      <div class="ov-score" id="overScore">0</div>
+      <div class="ov-new" id="overNew" hidden>★ 新纪录 ★</div>
+      <div class="ov-stats">
+        <div>距离<b id="overDist">0 米</b></div>
+        <div>金币<b id="overCoins">0</b></div>
+        <div>完美闪避<b id="overPerfect">0</b></div>
+        <div>最高连击<b id="overCombo">0</b></div>
+        <div>最高分<b id="overBest">0</b></div>
+      </div>
+      <div class="ov-btns">
+        <button class="go-btn" id="btnRestart">再来一局</button>
+        <button class="go-btn ghost" id="btnMenu">换角色</button>
+        <a class="go-btn ghost" href="/games/">返回大厅</a>
+      </div>
+    </div>
+  </div>
+  <div class="run-bar">
+    <span class="note">手机上：点击屏幕跳跃，下滑滑铲。电脑带不动 3D 时可以玩 <a href="runner-2d.html">经典 2D 版</a>。模型：Quaternius、Kenney（CC0）。</span>
+    <button class="btn small mute-btn" id="btnMute"></button>
+  </div>
+  <div class="touch-pad">
+    <button id="padJump">⤴ 跳</button>
+    <button id="padSlide">⤵ 滑</button>
+  </div>
+</div>
+
+<script src="fx.js"></script>
+<script src="runner-city.js"></script>
+<script type="module" src="runner3d.js"></script>
+</body>
+</html>
